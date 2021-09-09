@@ -8,9 +8,9 @@ using Photon.Realtime;
 public class PlayerManager : MonoBehaviour
 {
     public Color color;
-
+    
     private void Start()
-    {
+    {       
         color = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
     }
 
@@ -26,6 +26,7 @@ public class PlayerManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.LeftShift))
         {
             color = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
+            MainMenuUI.instance.colorUI.color = color;
         }
     }
 
