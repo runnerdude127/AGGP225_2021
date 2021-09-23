@@ -47,6 +47,8 @@ public class CameraManagaer : MonoBehaviour
 
     void Start()
     {
+        UnityEngine.Cursor.lockState = CursorLockMode.Locked;
+        UnityEngine.Cursor.visible = false;
         // Start following the target if wanted.
         if (followOnStart)
         {
@@ -69,6 +71,14 @@ public class CameraManagaer : MonoBehaviour
         {
             Follow();
         }
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            isFollowing = false;
+            UnityEngine.Cursor.lockState = CursorLockMode.None;
+            UnityEngine.Cursor.visible = true;
+            PhotonManager.instance.LeaveRoom();           
+        }
     }
 
 
@@ -83,9 +93,6 @@ public class CameraManagaer : MonoBehaviour
 
     void Follow()
     {
-        UnityEngine.Cursor.lockState = CursorLockMode.Locked;
-        UnityEngine.Cursor.visible = false;
-
         float mouseX = Input.GetAxis("Mouse X") * horizontalSpeed;
         float mouseY = Input.GetAxis("Mouse Y") * verticalSpeed;
 
@@ -95,12 +102,12 @@ public class CameraManagaer : MonoBehaviour
 
         cameraTransform.eulerAngles = new Vector3(xRotation, yRotation, 0.0f);
 
-        /*cameraOffset.z = -distance;
+        cameraOffset.z = -distance;
         cameraOffset.y = height;
 
         cameraTransform.position = Vector3.Lerp(cameraTransform.position, this.transform.position + this.transform.TransformVector(cameraOffset), smoothSpeed * Time.deltaTime);
 
-        cameraTransform.LookAt(this.transform.position + centerOffset);*/
+        //cameraTransform.LookAt(this.transform.position + centerOffset);
 
     }
 
