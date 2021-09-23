@@ -8,7 +8,9 @@ using Photon.Realtime;
 
 public class GameManager : MonoBehaviour
 {
+    //public Camera playerCamera;
     public GameObject playerPrefab;
+    public List<GameObject> spawnPoints = new List<GameObject>();
 
     private void Start()
     {
@@ -20,7 +22,8 @@ public class GameManager : MonoBehaviour
 
         if (playerPrefab)
         {
-            PhotonNetwork.Instantiate(playerPrefab.name, Vector3.zero, Quaternion.identity);
+            GameObject spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Count)];
+            PhotonNetwork.Instantiate(playerPrefab.name, spawnPoint.transform.position, spawnPoint.transform.rotation);
         }
         else
         {
