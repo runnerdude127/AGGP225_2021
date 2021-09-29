@@ -20,9 +20,6 @@ public class MainMenuUI : MonoBehaviour
     TMP_InputField usernameField;
     #endregion
 
-    #region InRoom UI
-    public Image colorUI;
-    #endregion
     public static MainMenuUI instance { get; private set; } // SINGLETON INSTANCE
 
     void Awake()

@@ -4,14 +4,6 @@ using UnityEngine;
 
 public class CameraManagaer : MonoBehaviour
 {
-    [Tooltip("The distance in the local x-z plane to the target")]
-    [SerializeField]
-    private float distance = 7.0f;
-
-    [Tooltip("The height we want the camera to be above the target")]
-    [SerializeField]
-    private float height = 3.0f;
-
     [Tooltip("Allow the camera to be offseted vertically from the target, for example giving more view of the sceneray and less ground.")]
     [SerializeField]
     private Vector3 centerOffset = Vector3.zero;
@@ -22,11 +14,11 @@ public class CameraManagaer : MonoBehaviour
 
     [Tooltip("The Smoothing for the camera to follow the target")]
     [SerializeField]
-    private float smoothSpeed = 0.125f;
+    private float smoothSpeed = 0f;
 
     // cached transform of the target
     Transform cameraTransform;
-
+    
     // maintain a flag internally to reconnect if target is lost or camera is switched
     bool isFollowing;
 
@@ -40,9 +32,6 @@ public class CameraManagaer : MonoBehaviour
     public float verticalSpeed = 1f;
     private float xRotation = 0.0f;
     private float yRotation = 0.0f;
-
-
-
 
 
     void Start()
@@ -102,34 +91,38 @@ public class CameraManagaer : MonoBehaviour
 
         cameraTransform.eulerAngles = new Vector3(xRotation, yRotation, 0.0f);
 
-        cameraOffset.z = -distance;
-        cameraOffset.y = height;
-
-        cameraTransform.position = Vector3.Lerp(cameraTransform.position, this.transform.position + this.transform.TransformVector(cameraOffset), smoothSpeed * Time.deltaTime);
-
-        //cameraTransform.LookAt(this.transform.position + centerOffset);
-
+        cameraOffset.x = centerOffset.x;
+        cameraOffset.y = centerOffset.y;
+        cameraOffset.z = centerOffset.z;
+       
+        cameraTransform.position = this.transform.position + this.transform.TransformVector(cameraOffset);
     }
 
     void Cut()
     {
-        cameraOffset.z = -distance;
-        cameraOffset.y = height;
+        /*cameraOffset.z = -distance;
+        cameraOffset.y = height;*/
 
-        cameraTransform.position = this.transform.position + this.transform.TransformVector(cameraOffset);
+        //cameraTransform.position = this.transform.position + this.transform.TransformVector(cameraOffset);
 
-        cameraTransform.LookAt(this.transform.position + centerOffset);
+        //cameraTransform.LookAt(this.transform.position + centerOffset);
     }
 
     public Vector3 GetCameraDirection()
     {
         if (cameraTransform)
         {
-            return cameraTransform.eulerAngles;
+            return cameraTransform.eulerAngles;   
         }
         else
         {
             return Vector3.zero;
         }       
+    }
+
+    public Vector3 GetCameraFacing()
+    {
+        Vector3 cameraFacing = Camera.main.transform.forward;
+        return cameraFacing;
     }
 }

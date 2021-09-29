@@ -8,23 +8,44 @@ using Photon.Realtime;
 
 public class PlayerManager : MonoBehaviour
 {
-    public Color color;
-
     public float speed = 5f;
     public float jumpSpeed = 1f;
-    public CharacterController characterController;
+    
+    public Color color;
+    public Color testColor;
     public Material playerColor;
+
+    public int health = 100;
+    int currentHealth;
+    public Meter healthBar;
+
+    public int charge = 100;
+    int currentCharge;
+    public Meter chargeBar;
+    float chargeSpeed = 1;
+    bool cooldownCharge = false;
+
+
+    public CharacterController characterController;
     float horizontal;
     float vertical;
     float velocity;
     CameraManagaer cam;
     Vector3 camDir;
-
+    // opposite : new Color(1.0f - color.r, 1.0f - color.g, 1.0f - color.b);
 
     AudioSource source;
+    //online
     public AudioClip jump;
     public AudioClip colorChange;
-    public AudioClip fun;
+    public AudioClip takeDamage;
+    public AudioClip shoot;
+    //client
+    public AudioClip chargeSound;
+    public AudioClip fullyCharged;
+    public AudioClip chargeDepleted;
+    public AudioClip noCharge;
+    public AudioClip hitConfirm;
 
     private void Start()
     {
@@ -33,10 +54,19 @@ public class PlayerManager : MonoBehaviour
         playerColor = gameObject.GetComponent<MeshRenderer>().material;
         cam = gameObject.GetComponent<CameraManagaer>();
 
+        currentHealth = health;
+        PlayerGUI.instance.thisPlayerHealth.SetMax(health);
+
+        StartCoroutine(ChargeBack());
+        currentCharge = charge;
+        PlayerGUI.instance.thisPlayerCharge.SetMax(charge);
+
         if (gameObject.GetPhotonView().IsMine)
         {
             color = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
-            MainMenuUI.instance.colorUI.color = color;
+            testColor = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
+            PlayerGUI.instance.colorUI.color = color;
+            PlayerGUI.instance.healthColor.color = color;
             playerColor.color = color;
             gameObject.GetPhotonView().RPC("playerColorChange", RpcTarget.AllBufferedViaServer, color.r, color.g, color.b);
         }
@@ -46,6 +76,8 @@ public class PlayerManager : MonoBehaviour
     {
         if (gameObject.GetPhotonView().IsMine)
         {
+            PlayerGUI.instance.thisPlayerHealth.SetCurrent(currentHealth);
+            PlayerGUI.instance.thisPlayerCharge.SetCurrent(currentCharge);
             //Debug.Log("grounded: " + characterController.isGrounded + " velocity: " + velocity);
             horizontal = Input.GetAxis("Horizontal") * speed;
             vertical = Input.GetAxis("Vertical") * speed;
@@ -54,7 +86,7 @@ public class PlayerManager : MonoBehaviour
             {
                 if (Input.GetKey(KeyCode.Space))
                 {
-                    //jump
+                    gameObject.GetPhotonView().RPC("playJumpSound", RpcTarget.All);
                     velocity = jumpSpeed;
                 }
                 else
@@ -64,7 +96,6 @@ public class PlayerManager : MonoBehaviour
                 
             }
             velocity += Physics.gravity.y * Time.deltaTime;
-            //characterController.Move( * Time.deltaTime);
 
             camDir = cam.GetCameraDirection();
             if (cam != null)
@@ -75,35 +106,143 @@ public class PlayerManager : MonoBehaviour
             gameObject.transform.rotation = Quaternion.Euler(gameObject.transform.eulerAngles.x, camDir.y, gameObject.transform.eulerAngles.z);
             characterController.Move((gameObject.transform.right * horizontal + gameObject.transform.forward * vertical + (new Vector3(0, 1, 0) * velocity)) * Time.deltaTime);            
 
-            // changes local user's color to apply
-            if (Input.GetKeyDown(KeyCode.E))
-            {
-                //colorchange
-                color = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
-                MainMenuUI.instance.colorUI.color = color;
-                playerColor.color = color;
-                gameObject.GetPhotonView().RPC("playerColorChange", RpcTarget.AllBufferedViaServer, color.r, color.g, color.b);         
-            }
-
             if (Input.GetKeyDown(KeyCode.Mouse0))
             {
-                //fun
+                if (!cooldownCharge)
+                {
+                    if ((currentCharge - 10) >= 0)
+                    {
+                        gameObject.GetPhotonView().RPC("shootWeapon", RpcTarget.All, color.r, color.g, color.b);
+                        PlayerGUI.instance.thisPlayerCharge.ResetMeter(currentCharge);
+                        currentCharge = currentCharge - 10;
+                        chargeSpeed = 1;
+                    }
+                    else
+                    {
+                        gameObject.GetPhotonView().RPC("shootWeapon", RpcTarget.All, color.r, color.g, color.b);
+                        PlayerGUI.instance.thisPlayerCharge.ResetMeter(currentCharge);
+                        currentCharge = 0;
+                        cooldownCharge = true;                    
+                        source.PlayOneShot(chargeDepleted);
+                    }
+                }
+                else
+                {
+                    source.PlayOneShot(noCharge);
+                }
+                
+            }
+
+            if (Input.GetKeyDown(KeyCode.Mouse1))
+            {
+                //playerHurt(10, testColor);
+            }
+
+            if (cooldownCharge)
+            {
+                PlayerGUI.instance.chargeColor.color = new Color(.5f, .5f, .5f);
+            }
+            else
+            {
+                PlayerGUI.instance.chargeColor.color = new Color(1, 1, 1);
             }
         }
-        
-        // change color over network
-        /*if (Input.GetKeyDown(KeyCode.Mouse0))
-        {
-            gameObject.GetPhotonView().RPC("changeColor", RpcTarget.AllBuffered, color.r, color.g, color.b);
-        }      */  
     }
 
-    /*[PunRPC]
-    void changeColor(float r, float g, float b)
+    IEnumerator ChargeBack()
     {
-        Color c = new Color(r, g, b);
-        Camera.main.backgroundColor = c;
-    }*/
+        yield return new WaitForSeconds(chargeSpeed);
+        //source.PlayOneShot(chargeSound, currentCharge);
+        currentCharge = currentCharge + 1;
+        if (currentCharge < charge)
+        {
+            if (chargeSpeed <= .02f)
+            {
+                chargeSpeed = .02f;
+            }
+            else
+            {
+                chargeSpeed = chargeSpeed / 1.5f;
+            }           
+            StartCoroutine(ChargeBack());
+        }
+        else
+        {
+            if (currentCharge > charge)
+            {
+                currentCharge = charge;
+            }
+            cooldownCharge = false;
+            source.PlayOneShot(fullyCharged);
+            yield return new WaitUntil(()=> currentCharge < charge);
+            chargeSpeed = 1;
+            StartCoroutine(ChargeBack());
+        }
+    }
+
+    [PunRPC]
+    void playerHurt(int damage, float r, float g, float b)
+    {
+        Color colorInflict = new Color(r, g, b);
+        if (playerColor.color != colorInflict)
+        {
+            gameObject.GetPhotonView().RPC("playDamageSound", RpcTarget.All);
+            currentHealth = currentHealth - damage;
+            PlayerGUI.instance.infectColor.color = colorInflict;
+            if (currentHealth <= 0)
+            {
+                currentHealth = health;
+                color = colorInflict;
+                PlayerGUI.instance.colorUI.color = color;
+                PlayerGUI.instance.healthColor.color = color;
+                playerColor.color = color;
+                testColor = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
+                gameObject.GetPhotonView().RPC("playColorSound", RpcTarget.All);
+                gameObject.GetPhotonView().RPC("playerColorChange", RpcTarget.AllBufferedViaServer, color.r, color.g, color.b);
+                PlayerGUI.instance.thisPlayerHealth.ResetMeter(currentHealth);
+            }
+        }
+        else
+        {
+            currentHealth = currentHealth + damage;
+        }        
+    }
+
+    [PunRPC]
+    void shootWeapon(float r, float g, float b)
+    {
+        Color colorInflict = new Color(r, g, b);
+        source.PlayOneShot(shoot);
+        RaycastHit hit;
+        Debug.Log("SHOOT");
+        if (Physics.Raycast(transform.position, cam.GetCameraFacing(), out hit, Mathf.Infinity))
+        {
+            Debug.DrawRay(transform.position, cam.GetCameraFacing() * hit.distance, Color.yellow);
+            Debug.Log("Did Hit: " + hit.transform.gameObject.name);
+            if (hit.transform.gameObject.tag == "Player")
+            {
+                Debug.Log("BINGO");
+                source.PlayOneShot(hitConfirm);
+                PlayerManager playerHit = hit.transform.gameObject.GetComponent<PlayerManager>();
+                {
+                    if (playerHit)
+                    {
+                        playerHit.gameObject.GetPhotonView().RPC("playerHurt", RpcTarget.All, 10, r, g, b);
+                        //playerHit.playerHurt(10, color);
+                    }
+                    else
+                    {
+                        Debug.Log("This guy has no PlayerManager.");
+                    }
+                }
+            }
+        }
+        else
+        {
+            Debug.DrawRay(transform.position, cam.GetCameraFacing() * 1000, Color.white);
+            Debug.Log("Did not Hit");
+        }
+    }
 
     [PunRPC]
     void playerColorChange(float r, float g, float b)
@@ -112,4 +251,32 @@ public class PlayerManager : MonoBehaviour
         Color c = new Color(r, g, b);
         playerColor.color = c;
     }
+
+    /*[PunRPC]
+    void playerStatUpdate(int healthChange, int chargeChange)
+    {
+        if (gameObject.GetPhotonView().IsMine)
+        {
+            currentHealth = healthChange;
+            currentCharge = chargeChange;
+        }            
+    }*/
+
+    [PunRPC]
+    void playColorSound()
+    {
+        source.PlayOneShot(colorChange);
+    }
+
+    [PunRPC]
+    void playJumpSound()
+    {
+        source.PlayOneShot(jump);
+    }
+
+    [PunRPC]
+    void playDamageSound()
+    {
+        source.PlayOneShot(takeDamage);
+    }   
 }

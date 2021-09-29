@@ -20,7 +20,7 @@ GameObject:
   - component: {fileID: 6101950539472748593}
   m_Layer: 0
   m_Name: PlayerInGame
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -133,14 +133,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e98d72130e1b64a42a8ef635c674d363, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  color: {r: 0, g: 0, b: 0, a: 0}
   speed: 8
   jumpSpeed: 5
-  characterController: {fileID: 0}
+  color: {r: 0, g: 0, b: 0, a: 0}
+  testColor: {r: 0, g: 0, b: 0, a: 0}
   playerColor: {fileID: 0}
-  jump: {fileID: 8300000, guid: 6bf2ee4b83279b9408721da47ff51a81, type: 3}
+  health: 100
+  healthBar: {fileID: 0}
+  charge: 100
+  chargeBar: {fileID: 0}
+  characterController: {fileID: 0}
+  jump: {fileID: 8300000, guid: 8da879b758678da4b898b282eb471643, type: 3}
   colorChange: {fileID: 8300000, guid: c2a670268cdaaf34a96168c29bd968e6, type: 3}
-  fun: {fileID: 8300000, guid: 18c418f4a8911d940896faec4d9bc402, type: 3}
+  takeDamage: {fileID: 8300000, guid: cc8eecb37402604418be01a5862372fa, type: 3}
+  shoot: {fileID: 8300000, guid: 87da4eaf9b1f48f48862d2773b79d1c9, type: 3}
+  chargeSound: {fileID: 8300000, guid: db64264919ef0d5479d31e7088a72bbc, type: 3}
+  fullyCharged: {fileID: 8300000, guid: f217079b6b2e9ae4694064d3fda9728c, type: 3}
+  chargeDepleted: {fileID: 8300000, guid: 2c36e72c4fa76834a941f9d51be76adc, type: 3}
+  noCharge: {fileID: 8300000, guid: c0df29c401faa9f428a2bd3e2664c0a5, type: 3}
+  hitConfirm: {fileID: 8300000, guid: f579fe2b034b6d54a9f59ff91b14c65e, type: 3}
 --- !u!114 &5051042218840664170
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -192,9 +203,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf60b94278abe6c4d8f1145aecfb40b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  distance: 0
-  height: 0
-  centerOffset: {x: 0, y: 0, z: 0}
+  centerOffset: {x: 0, y: 0.5, z: 0}
   followOnStart: 0
   smoothSpeed: 0
   horizontalSpeed: 3
@@ -209,8 +218,8 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 0}
-  m_PlayOnAwake: 1
+  m_audioClip: {fileID: 8300000, guid: 6bf2ee4b83279b9408721da47ff51a81, type: 3}
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
   Loop: 0
@@ -255,7 +264,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0
+      value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0
