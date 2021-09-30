@@ -14,7 +14,7 @@ public class CameraManagaer : MonoBehaviour
 
     [Tooltip("The Smoothing for the camera to follow the target")]
     [SerializeField]
-    private float smoothSpeed = 0f;
+    //private float smoothSpeed = 0f;
 
     // cached transform of the target
     Transform cameraTransform;

@@ -235,7 +235,7 @@ MonoBehaviour:
   testColor: {r: 0, g: 0, b: 0, a: 0}
   playerColor: {fileID: 0}
   nametag: {fileID: 3655927923484195783}
-  name: {fileID: 0}
+  myName: {fileID: 0}
   health: 100
   healthBar: {fileID: 0}
   charge: 100
@@ -304,7 +304,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   centerOffset: {x: 0, y: 0.5, z: 0}
   followOnStart: 0
-  smoothSpeed: 0
+  cameraTransform: {fileID: 0}
   horizontalSpeed: 3
   verticalSpeed: 3
 --- !u!82 &6101950539472748593
@@ -414,7 +414,6 @@ GameObject:
   - component: {fileID: 9109889066054543721}
   - component: {fileID: 3020162502345657775}
   - component: {fileID: 4948918959353499727}
-  - component: {fileID: 6149203870708370087}
   m_Layer: 0
   m_Name: nose
   m_TagString: Untagged
@@ -485,16 +484,3 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &6149203870708370087
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7404559083500660060}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}

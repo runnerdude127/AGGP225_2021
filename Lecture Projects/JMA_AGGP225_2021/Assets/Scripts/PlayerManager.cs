@@ -10,13 +10,13 @@ public class PlayerManager : MonoBehaviour
 {
     public float speed = 5f;
     public float jumpSpeed = 1f;
-    
+
     public Color color;
     public Color testColor;
     public Material playerColor;
 
     public GameObject nametag;
-    public TextMesh name;
+    public TextMesh myName;
     public int health = 100;
     int currentHealth;
     public Meter healthBar;
@@ -57,8 +57,6 @@ public class PlayerManager : MonoBehaviour
         characterController = gameObject.GetComponent<CharacterController>();
         playerColor = gameObject.GetComponent<MeshRenderer>().material;
         cam = gameObject.GetComponent<CameraManagaer>();
-        name = gameObject.GetComponentInChildren<TextMesh>();
-
 
         currentHealth = health;
         PlayerGUI.instance.thisPlayerHealth.SetMax(health);
@@ -69,23 +67,21 @@ public class PlayerManager : MonoBehaviour
 
         if (gameObject.GetPhotonView().IsMine)
         {
-            name.text = PhotonManager.instance.myUsername;
             color = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
             testColor = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
             PlayerGUI.instance.colorUI.color = color;
             PlayerGUI.instance.healthColor.color = color;
             playerColor.color = color;
             gameObject.GetPhotonView().RPC("playerColorChange", RpcTarget.AllBufferedViaServer, color.r, color.g, color.b);
+            gameObject.GetPhotonView().RPC("playerSetup", RpcTarget.AllBufferedViaServer, PhotonManager.instance.myUsername);
         }
     }
 
     private void Update()
     {
+        nametag.transform.rotation = Quaternion.LookRotation(nametag.transform.position - Camera.main.transform.position);
         if (gameObject.GetPhotonView().IsMine)
         {
-            nametag.transform.LookAt(Camera.current.transform.position);
-
-
             PlayerGUI.instance.thisPlayerHealth.SetCurrent(currentHealth);
             PlayerGUI.instance.thisPlayerCharge.SetCurrent(currentCharge);
 
@@ -108,7 +104,7 @@ public class PlayerManager : MonoBehaviour
                 {
                     velocity = 0;
                 }
-                
+
             }
             velocity += Physics.gravity.y * Time.deltaTime;
 
@@ -119,18 +115,18 @@ public class PlayerManager : MonoBehaviour
             }
 
             gameObject.transform.rotation = Quaternion.Euler(gameObject.transform.eulerAngles.x, camDir.y, gameObject.transform.eulerAngles.z);
-            characterController.Move((gameObject.transform.right * horizontal + gameObject.transform.forward * vertical + (new Vector3(0, 1, 0) * velocity)) * Time.deltaTime);            
+            characterController.Move((gameObject.transform.right * horizontal + gameObject.transform.forward * vertical + (new Vector3(0, 1, 0) * velocity)) * Time.deltaTime);
 
             if (Input.GetKeyDown(KeyCode.Mouse0))
             {
                 if (!cooldownCharge)
                 {
-                    if ((currentCharge - 10) >= 0)
+                    if ((currentCharge - 2) >= 0)
                     {
                         //gameObject.GetPhotonView().RPC("shootWeapon", RpcTarget.All, color.r, color.g, color.b);
                         shootWeapon(color.r, color.g, color.b);
                         PlayerGUI.instance.thisPlayerCharge.ResetMeter(currentCharge);
-                        currentCharge = currentCharge - 10;
+                        currentCharge = currentCharge - 2;
                         chargeSpeed = 1;
                     }
                     else
@@ -139,7 +135,7 @@ public class PlayerManager : MonoBehaviour
                         shootWeapon(color.r, color.g, color.b);
                         PlayerGUI.instance.thisPlayerCharge.ResetMeter(currentCharge);
                         currentCharge = 0;
-                        cooldownCharge = true;                    
+                        cooldownCharge = true;
                         source.PlayOneShot(chargeDepleted);
                     }
                 }
@@ -147,7 +143,7 @@ public class PlayerManager : MonoBehaviour
                 {
                     source.PlayOneShot(noCharge);
                 }
-                
+
             }
 
             if (Input.GetKeyDown(KeyCode.Mouse1))
@@ -182,7 +178,7 @@ public class PlayerManager : MonoBehaviour
             else
             {
                 chargeSpeed = chargeSpeed / 1.5f;
-            }           
+            }
             StartCoroutine(ChargeBack());
         }
         else
@@ -193,20 +189,26 @@ public class PlayerManager : MonoBehaviour
             }
             cooldownCharge = false;
             source.PlayOneShot(fullyCharged);
-            yield return new WaitUntil(()=> currentCharge < charge);
+            yield return new WaitUntil(() => currentCharge < charge);
             chargeSpeed = 1;
             StartCoroutine(ChargeBack());
         }
     }
 
-    //[PunRPC]
     void shootWeapon(float r, float g, float b)
-    {     
+    {
         source.PlayOneShot(shoot);
         Debug.DrawRay(transform.position, cam.GetCameraFacing() * 1000, Color.red, 10);
-        Debug.Log(cam.GetCameraFacing());
+        //Debug.Log(cam.GetCameraFacing());
         GameObject shotFired = PhotonNetwork.Instantiate(rayShot.name, this.transform.position, Quaternion.Euler(camDir), 0);
         shotFired.GetPhotonView().RPC("colorSet", RpcTarget.All, r, g, b);
+    }
+
+    [PunRPC]
+    void playerSetup(string nameSet)
+    {
+        myName = nametag.GetComponent<TextMesh>();
+        this.myName.text = nameSet;
     }
 
     [PunRPC]
