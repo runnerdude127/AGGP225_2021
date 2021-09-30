@@ -15,6 +15,8 @@ public class PlayerManager : MonoBehaviour
     public Color testColor;
     public Material playerColor;
 
+    public GameObject nametag;
+    public TextMesh name;
     public int health = 100;
     int currentHealth;
     public Meter healthBar;
@@ -33,6 +35,8 @@ public class PlayerManager : MonoBehaviour
     CameraManagaer cam;
     Vector3 camDir;
     // opposite : new Color(1.0f - color.r, 1.0f - color.g, 1.0f - color.b);
+
+    public GameObject rayShot;
 
     AudioSource source;
     //online
@@ -53,6 +57,8 @@ public class PlayerManager : MonoBehaviour
         characterController = gameObject.GetComponent<CharacterController>();
         playerColor = gameObject.GetComponent<MeshRenderer>().material;
         cam = gameObject.GetComponent<CameraManagaer>();
+        name = gameObject.GetComponentInChildren<TextMesh>();
+
 
         currentHealth = health;
         PlayerGUI.instance.thisPlayerHealth.SetMax(health);
@@ -63,6 +69,7 @@ public class PlayerManager : MonoBehaviour
 
         if (gameObject.GetPhotonView().IsMine)
         {
+            name.text = PhotonManager.instance.myUsername;
             color = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
             testColor = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
             PlayerGUI.instance.colorUI.color = color;
@@ -76,8 +83,16 @@ public class PlayerManager : MonoBehaviour
     {
         if (gameObject.GetPhotonView().IsMine)
         {
+            nametag.transform.LookAt(Camera.current.transform.position);
+
+
             PlayerGUI.instance.thisPlayerHealth.SetCurrent(currentHealth);
             PlayerGUI.instance.thisPlayerCharge.SetCurrent(currentCharge);
+
+            PlayerGUI.instance.colorUI.color = color;
+            PlayerGUI.instance.healthColor.color = color;
+            playerColor.color = color;
+
             //Debug.Log("grounded: " + characterController.isGrounded + " velocity: " + velocity);
             horizontal = Input.GetAxis("Horizontal") * speed;
             vertical = Input.GetAxis("Vertical") * speed;
@@ -112,14 +127,16 @@ public class PlayerManager : MonoBehaviour
                 {
                     if ((currentCharge - 10) >= 0)
                     {
-                        gameObject.GetPhotonView().RPC("shootWeapon", RpcTarget.All, color.r, color.g, color.b);
+                        //gameObject.GetPhotonView().RPC("shootWeapon", RpcTarget.All, color.r, color.g, color.b);
+                        shootWeapon(color.r, color.g, color.b);
                         PlayerGUI.instance.thisPlayerCharge.ResetMeter(currentCharge);
                         currentCharge = currentCharge - 10;
                         chargeSpeed = 1;
                     }
                     else
                     {
-                        gameObject.GetPhotonView().RPC("shootWeapon", RpcTarget.All, color.r, color.g, color.b);
+                        //gameObject.GetPhotonView().RPC("shootWeapon", RpcTarget.All, color.r, color.g, color.b);
+                        shootWeapon(color.r, color.g, color.b);
                         PlayerGUI.instance.thisPlayerCharge.ResetMeter(currentCharge);
                         currentCharge = 0;
                         cooldownCharge = true;                    
@@ -135,7 +152,9 @@ public class PlayerManager : MonoBehaviour
 
             if (Input.GetKeyDown(KeyCode.Mouse1))
             {
-                //playerHurt(10, testColor);
+                //gameObject.GetPhotonView().RPC("playerHurt", RpcTarget.All, 10, testColor.r, testColor.g, testColor.b);
+                gameObject.GetPhotonView().RPC("playerColorChange", RpcTarget.AllBufferedViaServer, testColor.r, testColor.g, testColor.b);
+                testColor = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
             }
 
             if (cooldownCharge)
@@ -180,68 +199,48 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
-    [PunRPC]
-    void playerHurt(int damage, float r, float g, float b)
-    {
-        Color colorInflict = new Color(r, g, b);
-        if (playerColor.color != colorInflict)
-        {
-            gameObject.GetPhotonView().RPC("playDamageSound", RpcTarget.All);
-            currentHealth = currentHealth - damage;
-            PlayerGUI.instance.infectColor.color = colorInflict;
-            if (currentHealth <= 0)
-            {
-                currentHealth = health;
-                color = colorInflict;
-                PlayerGUI.instance.colorUI.color = color;
-                PlayerGUI.instance.healthColor.color = color;
-                playerColor.color = color;
-                testColor = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
-                gameObject.GetPhotonView().RPC("playColorSound", RpcTarget.All);
-                gameObject.GetPhotonView().RPC("playerColorChange", RpcTarget.AllBufferedViaServer, color.r, color.g, color.b);
-                PlayerGUI.instance.thisPlayerHealth.ResetMeter(currentHealth);
-            }
-        }
-        else
-        {
-            currentHealth = currentHealth + damage;
-        }        
+    //[PunRPC]
+    void shootWeapon(float r, float g, float b)
+    {     
+        source.PlayOneShot(shoot);
+        Debug.DrawRay(transform.position, cam.GetCameraFacing() * 1000, Color.red, 10);
+        Debug.Log(cam.GetCameraFacing());
+        GameObject shotFired = PhotonNetwork.Instantiate(rayShot.name, this.transform.position, Quaternion.Euler(camDir), 0);
+        shotFired.GetPhotonView().RPC("colorSet", RpcTarget.All, r, g, b);
     }
 
     [PunRPC]
-    void shootWeapon(float r, float g, float b)
+    public void playerHurt(int damage, float r, float g, float b)
     {
-        Color colorInflict = new Color(r, g, b);
-        source.PlayOneShot(shoot);
-        RaycastHit hit;
-        Debug.Log("SHOOT");
-        if (Physics.Raycast(transform.position, cam.GetCameraFacing(), out hit, Mathf.Infinity))
+        if (gameObject.GetPhotonView().IsMine)
         {
-            Debug.DrawRay(transform.position, cam.GetCameraFacing() * hit.distance, Color.yellow);
-            Debug.Log("Did Hit: " + hit.transform.gameObject.name);
-            if (hit.transform.gameObject.tag == "Player")
+            Color colorInflict = new Color(r, g, b);
+            if (playerColor.color != colorInflict)
             {
-                Debug.Log("BINGO");
-                source.PlayOneShot(hitConfirm);
-                PlayerManager playerHit = hit.transform.gameObject.GetComponent<PlayerManager>();
+                gameObject.GetPhotonView().RPC("playDamageSound", RpcTarget.All);
+                currentHealth = currentHealth - damage;
+                PlayerGUI.instance.infectColor.color = colorInflict;
+                if (currentHealth <= 0)
                 {
-                    if (playerHit)
-                    {
-                        playerHit.gameObject.GetPhotonView().RPC("playerHurt", RpcTarget.All, 10, r, g, b);
-                        //playerHit.playerHurt(10, color);
-                    }
-                    else
-                    {
-                        Debug.Log("This guy has no PlayerManager.");
-                    }
+                    gameObject.GetPhotonView().RPC("playColorSound", RpcTarget.All);
+                    gameObject.GetPhotonView().RPC("playerColorChange", RpcTarget.AllBufferedViaServer, colorInflict.r, colorInflict.g, colorInflict.b);
+                    currentHealth = health;
+                    PlayerGUI.instance.thisPlayerHealth.ResetMeter(currentHealth);
                 }
             }
-        }
-        else
-        {
-            Debug.DrawRay(transform.position, cam.GetCameraFacing() * 1000, Color.white);
-            Debug.Log("Did not Hit");
-        }
+            else
+            {
+                if ((currentHealth + damage) > health)
+                {
+                    currentHealth = health;
+                }
+                else
+                {
+                    currentHealth = currentHealth + damage;
+                }
+                PlayerGUI.instance.thisPlayerHealth.ResetMeter(currentHealth);
+            }
+        }        
     }
 
     [PunRPC]
@@ -250,18 +249,10 @@ public class PlayerManager : MonoBehaviour
         playerColor = gameObject.GetComponent<MeshRenderer>().material;
         Color c = new Color(r, g, b);
         playerColor.color = c;
+        color = c;
     }
 
-    /*[PunRPC]
-    void playerStatUpdate(int healthChange, int chargeChange)
-    {
-        if (gameObject.GetPhotonView().IsMine)
-        {
-            currentHealth = healthChange;
-            currentCharge = chargeChange;
-        }            
-    }*/
-
+    #region sounds
     [PunRPC]
     void playColorSound()
     {
@@ -278,5 +269,6 @@ public class PlayerManager : MonoBehaviour
     void playDamageSound()
     {
         source.PlayOneShot(takeDamage);
-    }   
+    }
+    #endregion
 }
