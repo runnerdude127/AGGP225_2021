@@ -30,4 +30,6 @@ public class GameManager : MonoBehaviour
             Debug.Log("playerPrefab not set. [GameManager][Start]");
         }
     }
+
+    
 }

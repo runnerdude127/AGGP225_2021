@@ -20,7 +20,7 @@ public class CameraManagaer : MonoBehaviour
     Transform cameraTransform;
     
     // maintain a flag internally to reconnect if target is lost or camera is switched
-    bool isFollowing;
+    public bool isFollowing;
 
     // Cache for camera offset
     Vector3 cameraOffset = Vector3.zero;
@@ -33,6 +33,18 @@ public class CameraManagaer : MonoBehaviour
     private float xRotation = 0.0f;
     private float yRotation = 0.0f;
 
+    public static CameraManagaer instance;
+    void Awake()
+    {
+        if (instance)
+        {
+            Destroy(this);
+        }
+        else
+        {
+            instance = this;
+        }
+    }
 
     void Start()
     {
@@ -62,10 +74,7 @@ public class CameraManagaer : MonoBehaviour
         }
 
         if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            isFollowing = false;
-            UnityEngine.Cursor.lockState = CursorLockMode.None;
-            UnityEngine.Cursor.visible = true;
+        { 
             PhotonManager.instance.LeaveRoom();           
         }
     }

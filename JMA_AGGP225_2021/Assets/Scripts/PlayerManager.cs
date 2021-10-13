@@ -51,12 +51,15 @@ public class PlayerManager : MonoBehaviour
     public AudioClip noCharge;
     public AudioClip hitConfirm;
 
+    public Animator playerAnim;
+
     private void Start()
     {
         source = gameObject.GetComponent<AudioSource>();
         characterController = gameObject.GetComponent<CharacterController>();
-        playerColor = gameObject.GetComponent<MeshRenderer>().material;
+        playerColor = gameObject.GetComponentInChildren<MeshRenderer>().material;
         cam = gameObject.GetComponent<CameraManagaer>();
+        playerAnim = gameObject.GetComponentInChildren<Animator>();
 
         currentHealth = health;
         PlayerGUI.instance.thisPlayerHealth.SetMax(health);
@@ -93,11 +96,25 @@ public class PlayerManager : MonoBehaviour
             horizontal = Input.GetAxis("Horizontal") * speed;
             vertical = Input.GetAxis("Vertical") * speed;
 
+            playerAnim.SetBool("grounded", characterController.isGrounded);
+            if (horizontal == 0 && vertical == 0)
+            {
+                playerAnim.SetBool("walking", false);
+            }
+            else 
+            {
+                playerAnim.SetBool("walking", true);
+            }
+
+
+
+
             if (characterController.isGrounded)
             {
                 if (Input.GetKey(KeyCode.Space))
                 {
                     gameObject.GetPhotonView().RPC("playJumpSound", RpcTarget.All);
+                    playerAnim.Play("Jump");
                     velocity = jumpSpeed;
                 }
                 else
@@ -202,6 +219,13 @@ public class PlayerManager : MonoBehaviour
         //Debug.Log(cam.GetCameraFacing());
         GameObject shotFired = PhotonNetwork.Instantiate(rayShot.name, this.transform.position, Quaternion.Euler(camDir), 0);
         shotFired.GetPhotonView().RPC("colorSet", RpcTarget.All, r, g, b);
+        RayShot myShot = shotFired.GetComponent<RayShot>();
+        myShot.parentSet(this.gameObject);
+    }
+
+    public void playHitConfirmSound()
+    {
+        source.PlayOneShot(hitConfirm);
     }
 
     [PunRPC]
@@ -247,14 +271,19 @@ public class PlayerManager : MonoBehaviour
 
     [PunRPC]
     void playerColorChange(float r, float g, float b)
-    {
-        playerColor = gameObject.GetComponent<MeshRenderer>().material;
+    {       
+        playerColor = gameObject.GetComponentInChildren<MeshRenderer>().material;
         Color c = new Color(r, g, b);
         playerColor.color = c;
         color = c;
+
+        PlayerGUI.instance.colorBlockAnim.enabled = false;
+        PlayerGUI.instance.colorBlockAnim.enabled = true;
+        //PlayerGUI.instance.colorBlockAnim.Play("Idle");
+        PlayerGUI.instance.colorBlockAnim.Play("ColorChange");
     }
 
-    #region sounds
+    #region rpc sounds
     [PunRPC]
     void playColorSound()
     {

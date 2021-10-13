@@ -20,6 +20,13 @@ public class MainMenuUI : MonoBehaviour
     TMP_InputField usernameField;
     #endregion
 
+    #region Game UI
+
+    [SerializeField]
+    TMP_Text timeText;
+
+    #endregion
+
     public static MainMenuUI instance { get; private set; } // SINGLETON INSTANCE
 
     void Awake()
@@ -54,7 +61,12 @@ public class MainMenuUI : MonoBehaviour
                 createButton.interactable = false;
                 randomButton.interactable = false;
             }
-        }   
+        }
+
+        if (timeText)
+        {
+            timeText.text = PhotonManager.instance.timer.ToString();
+        }
     }
 
     public void UpdateLog(string _log)

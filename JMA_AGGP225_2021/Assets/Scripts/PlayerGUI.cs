@@ -14,6 +14,9 @@ public class PlayerGUI : MonoBehaviour
     public Image chargeColor;
 
     public Meter thisPlayerCharge;
+
+    public Animator colorBlockAnim;
+    Animation colorchange;
     #endregion
 
     public static PlayerGUI instance { get; private set; } // SINGLETON INSTANCE
@@ -32,7 +35,7 @@ public class PlayerGUI : MonoBehaviour
 
     private void Start()
     {
-
+        colorBlockAnim = colorUI.GetComponent<Animator>();
     }
 
     #region UI Updates

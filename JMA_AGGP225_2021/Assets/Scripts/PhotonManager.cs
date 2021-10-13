@@ -10,13 +10,14 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     /// <summary>
     /// current game version
     /// </summary>
-    string gameVersion = "really really early";
+    string gameVersion = "v1.4";
 
     public string myUsername;
     public bool canConnect;
 
     RoomOptions roomOptions = new RoomOptions();
     string gameplayLevel = "InRoom";
+    public int timer = 100;
 
     public static PhotonManager instance { get; private set; }
     void Awake()
@@ -78,6 +79,9 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     {
         Debug.Log("Leaving... [PhotonManager][LeaveRoom]");
         MainMenuUI.instance.UpdateLog("Leaving...");
+        CameraManagaer.instance.isFollowing = false;
+        UnityEngine.Cursor.lockState = CursorLockMode.None;
+        UnityEngine.Cursor.visible = true;
         PhotonNetwork.LeaveRoom();
     }
 
@@ -85,6 +89,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     {
         Debug.Log("Room '" + PhotonNetwork.CurrentRoom.Name + "' created. [PhotonManager][OnCreatedRoom]");
         MainMenuUI.instance.UpdateLog("Room '" + PhotonNetwork.CurrentRoom.Name + "' created.");
+        StartCoroutine(GameTime());
     }
     public override void OnJoinedRoom()
     {        
@@ -125,5 +130,20 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     void UsernameRPC(string _username, string _chat)
     {
         Username.instance.usernameText.text = _username + ": " + _chat;
+    }
+
+    [PunRPC]
+    IEnumerator GameTime()
+    {
+        yield return new WaitForSeconds(1f);
+        timer = timer - 1;
+        if (timer <= 0)
+        {
+            LeaveRoom();
+        }
+        else
+        {
+            StartCoroutine(GameTime());
+        }
     }
 }
