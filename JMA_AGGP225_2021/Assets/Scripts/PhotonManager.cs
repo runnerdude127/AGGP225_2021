@@ -89,7 +89,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     {
         Debug.Log("Room '" + PhotonNetwork.CurrentRoom.Name + "' created. [PhotonManager][OnCreatedRoom]");
         MainMenuUI.instance.UpdateLog("Room '" + PhotonNetwork.CurrentRoom.Name + "' created.");
-        StartCoroutine(GameTime());
+        //StartCoroutine(GameTime());
     }
     public override void OnJoinedRoom()
     {        

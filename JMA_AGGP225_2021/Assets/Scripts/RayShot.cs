@@ -42,7 +42,7 @@ public class RayShot : MonoBehaviour
         yield return new WaitUntil(() => myFirer != null);
         RaycastHit hit;
         currentLife = lifetime;
-        //Debug.Log("SHOOT");
+        Debug.Log("SHOOT");
 
         if (Physics.Raycast(transform.position, this.transform.forward, out hit, Mathf.Infinity))
         {
@@ -50,10 +50,10 @@ public class RayShot : MonoBehaviour
             transform.localPosition += (transform.forward * hit.distance / 2);
             Debug.DrawRay(transform.position, this.transform.forward * hit.distance, Color.yellow, 10);
             Instantiate(hitEffect, hit.point, Quaternion.identity);
-            //Debug.Log("Did Hit: " + hit.transform.gameObject.name);
+            Debug.Log("Did Hit: " + hit.transform.gameObject.name);
             if (hit.transform.gameObject.tag == "Player")
             {
-                //Debug.Log("BINGO");
+                Debug.Log("BINGO");
                 PlayerManager playerHit = hit.transform.gameObject.GetComponent<PlayerManager>();
                 PlayerManager shooter = myFirer.transform.gameObject.GetComponent<PlayerManager>();
 
@@ -65,7 +65,7 @@ public class RayShot : MonoBehaviour
                 }
                 else
                 {
-                    //Debug.Log("This guy has no PlayerManager.");
+                    Debug.Log("This guy has no PlayerManager.");
                 }
             }
         }
@@ -73,7 +73,7 @@ public class RayShot : MonoBehaviour
         {
             gameObject.transform.localScale = new Vector3(.5f, .5f, 100);
             Debug.DrawRay(transform.position, this.transform.forward * 1000, Color.white, 10);
-            //Debug.Log("Did not Hit");
+            Debug.Log("Did not Hit");
         }
         StartCoroutine(StartLifetime());
     }
@@ -83,8 +83,7 @@ public class RayShot : MonoBehaviour
         myFirer = parent;
     }
 
-    [PunRPC]
-    void colorSet(float r, float g, float b)
+    public void colorSet(float r, float g, float b)
     {
         bulletColor = gameObject.GetComponent<MeshRenderer>().material;
         Color c = new Color(r, g, b);

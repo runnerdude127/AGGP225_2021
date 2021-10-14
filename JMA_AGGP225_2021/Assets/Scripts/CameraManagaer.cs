@@ -17,7 +17,7 @@ public class CameraManagaer : MonoBehaviour
     //private float smoothSpeed = 0f;
 
     // cached transform of the target
-    Transform cameraTransform;
+    public Transform cameraTransform;
     
     // maintain a flag internally to reconnect if target is lost or camera is switched
     public bool isFollowing;

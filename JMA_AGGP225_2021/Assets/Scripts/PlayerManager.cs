@@ -15,6 +15,8 @@ public class PlayerManager : MonoBehaviour
     public Color testColor;
     public Material playerColor;
 
+    public Transform shootPos;
+
     public GameObject nametag;
     public TextMesh myName;
     public int health = 100;
@@ -85,6 +87,7 @@ public class PlayerManager : MonoBehaviour
         nametag.transform.rotation = Quaternion.LookRotation(nametag.transform.position - Camera.main.transform.position);
         if (gameObject.GetPhotonView().IsMine)
         {
+            gameObject.GetPhotonView().RPC("setShoot", RpcTarget.All);
             PlayerGUI.instance.thisPlayerHealth.SetCurrent(currentHealth);
             PlayerGUI.instance.thisPlayerCharge.SetCurrent(currentCharge);
 
@@ -96,25 +99,13 @@ public class PlayerManager : MonoBehaviour
             horizontal = Input.GetAxis("Horizontal") * speed;
             vertical = Input.GetAxis("Vertical") * speed;
 
-            playerAnim.SetBool("grounded", characterController.isGrounded);
-            if (horizontal == 0 && vertical == 0)
-            {
-                playerAnim.SetBool("walking", false);
-            }
-            else 
-            {
-                playerAnim.SetBool("walking", true);
-            }
-
-
-
+            AnimationHandler();
 
             if (characterController.isGrounded)
             {
                 if (Input.GetKey(KeyCode.Space))
                 {
                     gameObject.GetPhotonView().RPC("playJumpSound", RpcTarget.All);
-                    playerAnim.Play("Jump");
                     velocity = jumpSpeed;
                 }
                 else
@@ -165,9 +156,9 @@ public class PlayerManager : MonoBehaviour
 
             if (Input.GetKeyDown(KeyCode.Mouse1))
             {
-                //gameObject.GetPhotonView().RPC("playerHurt", RpcTarget.All, 10, testColor.r, testColor.g, testColor.b);
-                gameObject.GetPhotonView().RPC("playerColorChange", RpcTarget.AllBufferedViaServer, testColor.r, testColor.g, testColor.b);
-                testColor = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
+                gameObject.GetPhotonView().RPC("playerHurt", RpcTarget.All, 10, testColor.r, testColor.g, testColor.b);
+                //gameObject.GetPhotonView().RPC("playerColorChange", RpcTarget.AllBufferedViaServer, testColor.r, testColor.g, testColor.b);
+                //testColor = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
             }
 
             if (cooldownCharge)
@@ -217,15 +208,64 @@ public class PlayerManager : MonoBehaviour
         source.PlayOneShot(shoot);
         Debug.DrawRay(transform.position, cam.GetCameraFacing() * 1000, Color.red, 10);
         //Debug.Log(cam.GetCameraFacing());
-        GameObject shotFired = PhotonNetwork.Instantiate(rayShot.name, this.transform.position, Quaternion.Euler(camDir), 0);
-        shotFired.GetPhotonView().RPC("colorSet", RpcTarget.All, r, g, b);
+        if (gameObject.GetPhotonView().IsMine)
+        {
+            gameObject.GetPhotonView().RPC("setShoot", RpcTarget.All); 
+        }
+        gameObject.GetPhotonView().RPC("makeShot", RpcTarget.All, r, g, b);
+        playerAnim.Play("Shoot");
+    }
+
+    [PunRPC]
+
+    void setShoot()
+    {
+        if (cam.cameraTransform)
+        {
+            shootPos.position = cam.cameraTransform.position - new Vector3(0, 0.1f, 0);
+            shootPos.rotation = Quaternion.Euler(camDir);
+        }
+    }
+
+    [PunRPC]
+    void makeShot(float r, float g, float b)
+    {
+        
+        GameObject shotFired = Instantiate(rayShot, shootPos.position, shootPos.rotation);
         RayShot myShot = shotFired.GetComponent<RayShot>();
+        myShot.colorSet(r, g, b);
         myShot.parentSet(this.gameObject);
     }
 
     public void playHitConfirmSound()
     {
         source.PlayOneShot(hitConfirm);
+    }
+
+    void AnimationHandler()
+    {
+        playerAnim.SetBool("grounded", characterController.isGrounded);
+        if (horizontal != 0 || vertical != 0)
+        {
+            playerAnim.SetBool("walking", true);
+        }
+        else
+        {
+            playerAnim.SetBool("walking", false);
+        }
+
+        if (characterController.isGrounded)
+        {
+            if (Input.GetKey(KeyCode.Space))
+            {
+                playerAnim.SetBool("jumping", true);
+            }
+            else
+            {
+                playerAnim.SetBool("jumping", false);
+            }
+
+        }
     }
 
     [PunRPC]
@@ -240,6 +280,7 @@ public class PlayerManager : MonoBehaviour
     {
         if (gameObject.GetPhotonView().IsMine)
         {
+            playerAnim.Play("Damage");
             Color colorInflict = new Color(r, g, b);
             if (playerColor.color != colorInflict)
             {
@@ -277,10 +318,10 @@ public class PlayerManager : MonoBehaviour
         playerColor.color = c;
         color = c;
 
-        PlayerGUI.instance.colorBlockAnim.enabled = false;
-        PlayerGUI.instance.colorBlockAnim.enabled = true;
-        //PlayerGUI.instance.colorBlockAnim.Play("Idle");
-        PlayerGUI.instance.colorBlockAnim.Play("ColorChange");
+        //PlayerGUI.instance.colorBlockAnim.enabled = false;
+        //PlayerGUI.instance.colorBlockAnim.enabled = true;
+        //PlayerGUI.instance.colorBlockAnim.Play("ColorChange");
+        testColor = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
     }
 
     #region rpc sounds
