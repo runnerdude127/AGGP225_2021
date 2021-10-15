@@ -213,18 +213,22 @@ public class PlayerManager : MonoBehaviour
             gameObject.GetPhotonView().RPC("setShoot", RpcTarget.All); 
         }
         gameObject.GetPhotonView().RPC("makeShot", RpcTarget.All, r, g, b);
-        playerAnim.Play("Shoot");
+        playerAnim.ResetTrigger("shoot");
+        playerAnim.SetTrigger("shoot");
     }
 
     [PunRPC]
 
     void setShoot()
     {
-        if (cam.cameraTransform)
+        if (cam)
         {
-            shootPos.position = cam.cameraTransform.position - new Vector3(0, 0.1f, 0);
-            shootPos.rotation = Quaternion.Euler(camDir);
-        }
+            if (cam.cameraTransform)
+            {
+                shootPos.position = cam.cameraTransform.position - new Vector3(0, 0.1f, 0);
+                shootPos.rotation = Quaternion.Euler(camDir);
+            }
+        }       
     }
 
     [PunRPC]
@@ -280,7 +284,8 @@ public class PlayerManager : MonoBehaviour
     {
         if (gameObject.GetPhotonView().IsMine)
         {
-            playerAnim.Play("Damage");
+            playerAnim.ResetTrigger("damage");
+            playerAnim.SetTrigger("damage");
             Color colorInflict = new Color(r, g, b);
             if (playerColor.color != colorInflict)
             {
