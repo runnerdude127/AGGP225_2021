@@ -8,6 +8,10 @@ public class Meter : MonoBehaviour
     public Slider slider;
     public Slider hitSlider;
 
+    public Image mainColor;
+    public Image lossColor;
+    public Image slideColor;
+
     void Start()
     {
         
@@ -39,5 +43,20 @@ public class Meter : MonoBehaviour
         hitSlider.maxValue = input;
         slider.value = input;
         hitSlider.value = input;
+    }
+
+    public void SetMainColor(Color c)
+    {
+        mainColor.color = c;
+    }
+
+    public void SetLossColor(Color c)
+    {
+        lossColor.color = c;
+    }
+
+    public void SetSlideColor(Color c)
+    {
+        slideColor.color = c;
     }
 }

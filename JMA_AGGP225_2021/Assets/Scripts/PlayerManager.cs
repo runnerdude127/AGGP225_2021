@@ -10,35 +10,35 @@ public class PlayerManager : MonoBehaviour
 {
     public float speed = 5f;
     public float jumpSpeed = 1f;
+    public int health = 100;
+    int currentHealth;
+    public int charge = 100;
+    int currentCharge;
+    float chargeSpeed = 1;
+    bool cooldownCharge = false;
 
     public Color color;
     public Color testColor;
     public Material playerColor;
+    // opposite : new Color(1.0f - color.r, 1.0f - color.g, 1.0f - color.b);
 
     public Transform shootPos;
+    public GameObject rayShot;
 
-    public GameObject nametag;
+    public GameObject userTag;
     public TextMesh myName;
-    public int health = 100;
-    int currentHealth;
+    private Meter headHealthBar;
+
     public Meter healthBar;
-
-    public int charge = 100;
-    int currentCharge;
     public Meter chargeBar;
-    float chargeSpeed = 1;
-    bool cooldownCharge = false;
-
 
     public CharacterController characterController;
     float horizontal;
     float vertical;
     float velocity;
+
     CameraManagaer cam;
     Vector3 camDir;
-    // opposite : new Color(1.0f - color.r, 1.0f - color.g, 1.0f - color.b);
-
-    public GameObject rayShot;
 
     AudioSource source;
     //online
@@ -78,18 +78,19 @@ public class PlayerManager : MonoBehaviour
             PlayerGUI.instance.healthColor.color = color;
             playerColor.color = color;
             gameObject.GetPhotonView().RPC("playerColorChange", RpcTarget.AllBufferedViaServer, color.r, color.g, color.b);
-            gameObject.GetPhotonView().RPC("playerSetup", RpcTarget.AllBufferedViaServer, PhotonManager.instance.myUsername);
+            gameObject.GetPhotonView().RPC("playerTagUpdate", RpcTarget.AllBufferedViaServer, PhotonManager.instance.myUsername);
         }
     }
 
     private void Update()
     {
-        nametag.transform.rotation = Quaternion.LookRotation(nametag.transform.position - Camera.main.transform.position);
+        userTag.transform.rotation = Quaternion.LookRotation(userTag.transform.position - Camera.main.transform.position);
         if (gameObject.GetPhotonView().IsMine)
         {
             gameObject.GetPhotonView().RPC("setShoot", RpcTarget.All);
             PlayerGUI.instance.thisPlayerHealth.SetCurrent(currentHealth);
             PlayerGUI.instance.thisPlayerCharge.SetCurrent(currentCharge);
+            gameObject.GetPhotonView().RPC("playerTagUpdate", RpcTarget.AllBufferedViaServer, PhotonManager.instance.myUsername);
 
             PlayerGUI.instance.colorUI.color = color;
             PlayerGUI.instance.healthColor.color = color;
@@ -233,8 +234,7 @@ public class PlayerManager : MonoBehaviour
 
     [PunRPC]
     void makeShot(float r, float g, float b)
-    {
-        
+    {       
         GameObject shotFired = Instantiate(rayShot, shootPos.position, shootPos.rotation);
         RayShot myShot = shotFired.GetComponent<RayShot>();
         myShot.colorSet(r, g, b);
@@ -273,9 +273,13 @@ public class PlayerManager : MonoBehaviour
     }
 
     [PunRPC]
-    void playerSetup(string nameSet)
+    void playerTagUpdate(string nameSet)
     {
-        myName = nametag.GetComponent<TextMesh>();
+        myName = userTag.GetComponentInChildren<TextMesh>();
+        headHealthBar = GetComponentInChildren<Meter>();
+        headHealthBar.SetMax(health);
+        headHealthBar.SetCurrent(currentHealth);
+        headHealthBar.SetMainColor(playerColor.color); 
         this.myName.text = nameSet;
     }
 
@@ -292,6 +296,7 @@ public class PlayerManager : MonoBehaviour
                 gameObject.GetPhotonView().RPC("playDamageSound", RpcTarget.All);
                 currentHealth = currentHealth - damage;
                 PlayerGUI.instance.infectColor.color = colorInflict;
+                headHealthBar.SetLossColor(colorInflict);
                 if (currentHealth <= 0)
                 {
                     gameObject.GetPhotonView().RPC("playColorSound", RpcTarget.All);

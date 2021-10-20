@@ -1,0 +1,46 @@
+Timer
+Health Bars over Heads
+Footstep Sounds
+
+*
+
+Lobby (Give each scene a quit button)
+Title - Connect to master
+ |
+ V
+Lobby - Show all players in room. Auto start when room is full. Working chat.
+ |
+ V
+In Game - Working chat
+
+• There is a winner at the end of the game
+• After the game ends, it sends the players in the room back to the lobby
+• If there are already 4 players in the lobby, it waits ~5 seconds before putting everyone back into a game
+• If there are less than 4 players in the lobby, it waits until another player enters the room to begin the next match
+
+*
+
+Add two more weapons
+Add three pickups
+Add customization
+
+*
+
+Deathmatch (already complete)
+	Players start out as their base color.
+	Players must turn others to their color by shooting them.
+	The game ends once time runs out, or all players are the same color.
+Add Hide n Seek
+	In this gamemode, hiders are BLUE and can't shoot
+	Seekers are RED and can shoot.
+	Hiders that become RED become seekers.
+	Seekers win if everyone becomes RED
+	Hiders win if there are still hiders left when time runs out.
+Add HOT COLOR
+	All players are some neutral color, and can't shoot.
+	One player is selected to become RED, who can shoot.
+	The player who has the HOT COLOR (RED) must shoot another player to give them the color, returning them to normal.
+	If the person who has the HOT COLOR remains that way for too long, they explode, and are eliminated.
+	Another random player is selected. This continues until there is only one player left.
+
+*
