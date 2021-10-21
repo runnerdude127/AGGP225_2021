@@ -48,9 +48,6 @@ public class CameraManagaer : MonoBehaviour
 
     void Start()
     {
-        UnityEngine.Cursor.lockState = CursorLockMode.Locked;
-        UnityEngine.Cursor.visible = false;
-        // Start following the target if wanted.
         if (followOnStart)
         {
             OnStartFollowing();
@@ -60,22 +57,14 @@ public class CameraManagaer : MonoBehaviour
 
     void LateUpdate()
     {
-        // The transform target may not destroy on level load, 
-        // so we need to cover corner cases where the Main Camera is different everytime we load a new scene, and reconnect when that happens
         if (cameraTransform == null && isFollowing)
         {
             OnStartFollowing();
         }
 
-        // only follow is explicitly declared
         if (isFollowing)
         {
             Follow();
-        }
-
-        if (Input.GetKeyDown(KeyCode.Escape))
-        { 
-            PhotonManager.instance.LeaveRoom();           
         }
     }
 
@@ -84,27 +73,29 @@ public class CameraManagaer : MonoBehaviour
     {
         cameraTransform = Camera.main.transform;
         isFollowing = true;
-        // we don't smooth anything, we go straight to the right camera shot
         Cut();
 
     }
 
     void Follow()
     {
-        float mouseX = Input.GetAxis("Mouse X") * horizontalSpeed;
-        float mouseY = Input.GetAxis("Mouse Y") * verticalSpeed;
+        if (PlayerGUI.instance.playerMouseInput == true)
+        {
+            float mouseX = Input.GetAxis("Mouse X") * horizontalSpeed;
+            float mouseY = Input.GetAxis("Mouse Y") * verticalSpeed;
 
-        yRotation += mouseX;
-        xRotation -= mouseY;
-        xRotation = Mathf.Clamp(xRotation, -90, 90);
+            yRotation += mouseX;
+            xRotation -= mouseY;
+            xRotation = Mathf.Clamp(xRotation, -90, 90);
+        }       
 
         cameraTransform.eulerAngles = new Vector3(xRotation, yRotation, 0.0f);
 
         cameraOffset.x = centerOffset.x;
         cameraOffset.y = centerOffset.y;
         cameraOffset.z = centerOffset.z;
-       
-        cameraTransform.position = this.transform.position + this.transform.TransformVector(cameraOffset);
+
+        cameraTransform.position = this.transform.position + this.transform.TransformVector(cameraOffset);  
     }
 
     void Cut()

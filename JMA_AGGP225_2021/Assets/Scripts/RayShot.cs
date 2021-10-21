@@ -57,10 +57,13 @@ public class RayShot : MonoBehaviour
                 PlayerManager playerHit = hit.transform.gameObject.GetComponent<PlayerManager>();
                 PlayerManager shooter = myFirer.transform.gameObject.GetComponent<PlayerManager>();
 
-                shooter.playHitConfirmSound();
+                if (shooter.gameObject.GetPhotonView().IsMine)
+                {
+                    shooter.playHitConfirmSound();
+                }              
                 if (playerHit)
                 {
-                    //playerHit.gameObject.GetPhotonView().RPC("playerHurt", RpcTarget.All, 10, 0, 0, 0);
+                    //playerHit.gameObject.GetPhotonView().RPC("playerHurt", RpcTarget.All, 10, color.r, color.g, color.b);
                     playerHit.playerHurt(10, color.r, color.g, color.b);
                 }
                 else

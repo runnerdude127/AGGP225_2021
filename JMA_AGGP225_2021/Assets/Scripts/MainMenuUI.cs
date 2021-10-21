@@ -43,6 +43,8 @@ public class MainMenuUI : MonoBehaviour
 
     private void Start()
     {
+        UnityEngine.Cursor.lockState = CursorLockMode.None;
+        UnityEngine.Cursor.visible = true;
         //colorUIRenderer = colorUI.GetComponent<Renderer>();
     }
 

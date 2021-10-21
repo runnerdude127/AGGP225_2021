@@ -1,6 +1,19 @@
-Timer
-Health Bars over Heads (might be done already)
+﻿DONE__________
+Health Bars in UserTag
 Footstep Sounds
+______________
+
+
+Timer
+
+if (photonnetwork.ismasterclient)
+{
+spawn timer, sends out current time to all players thru rpc
+}
+
+
+Working chat
+fix text chat wrapping stuff
 
 *
 
@@ -11,7 +24,7 @@ Title - Connect to master
 Lobby - Show all players in room. Auto start when room is full. Working chat.
  |
  V
-In Game - Working chat
+In Game
 
 • There is a winner at the end of the game
 • After the game ends, it sends the players in the room back to the lobby
