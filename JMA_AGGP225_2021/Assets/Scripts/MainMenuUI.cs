@@ -18,6 +18,11 @@ public class MainMenuUI : MonoBehaviour
 
     [SerializeField]
     TMP_InputField usernameField;
+
+    [SerializeField]
+    Image colorRef;
+    Color playerStartColor;
+
     #endregion
 
     #region Game UI
@@ -69,6 +74,7 @@ public class MainMenuUI : MonoBehaviour
         {
             timeText.text = PhotonManager.instance.timer.ToString();
         }
+  
     }
 
     public void UpdateLog(string _log)
@@ -92,6 +98,17 @@ public class MainMenuUI : MonoBehaviour
             if (!string.IsNullOrEmpty(usernameField.text))
             {
                 PhotonManager.instance.myUsername = usernameField.text;
+
+                if (colorRef)
+                {
+                    playerStartColor = colorRef.color;
+                    PhotonManager.instance.myColor = playerStartColor;
+                }
+                else
+                {
+                    PhotonManager.instance.myColor = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
+                }
+                
                 PhotonManager.instance.CreateRoom();
             }
             else

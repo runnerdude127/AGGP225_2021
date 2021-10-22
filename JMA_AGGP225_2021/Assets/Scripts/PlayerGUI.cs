@@ -7,8 +7,8 @@ using UnityEngine.UI;
 public class PlayerGUI : MonoBehaviour
 {
     #region InRoom UI
-    bool paused = false;
-    bool chatting = false;
+    public bool paused = false;
+    public bool chatting = false;
     public GameObject pauseMenu;
     public TMP_InputField chatBox;
 
@@ -39,6 +39,8 @@ public class PlayerGUI : MonoBehaviour
         {
             instance = this;
         }
+
+        chatBox.interactable = false;
     }
 
     private void Start()
@@ -63,19 +65,18 @@ public class PlayerGUI : MonoBehaviour
             PauseMenu();
         }
 
-        if (Input.GetKeyDown(KeyCode.Return))
-        {      
-            if (chatting == true)
-            {
-                ChatroomManager.instance.submitMessage();
-                Debug.Log("SWOINK");
-                ChatboxSelect();
-            }
-            else
-            {
-                chatBox.ActivateInputField();
-                ChatboxSelect();
-            } 
+        if (Input.GetKeyDown(KeyCode.T) && chatting == false)
+        {
+            chatBox.interactable = true;
+            chatBox.ActivateInputField();
+            ChatboxSelect();
+        }
+        
+
+        if (Input.GetKeyDown(KeyCode.Return) && chatting == false)
+        {
+            ChatroomManager.instance.submitMessage();
+            chatBox.interactable = false;
         }
     }
 
@@ -86,15 +87,14 @@ public class PlayerGUI : MonoBehaviour
             playerMouseInput = false;
             playerKeyInput = false;
         }
+        else if (chatting == true)
+        {
+            playerKeyInput = false; 
+        }
         else
         {
             playerMouseInput = true;
             playerKeyInput = true;
-        }
-
-        if (chatting == true)
-        {
-            playerKeyInput = false;         
         }
     }
 
@@ -126,14 +126,12 @@ public class PlayerGUI : MonoBehaviour
 
     public void ChatboxSelect()
     {
-        if (chatting == false)
-        {
-            chatting = true;
-        }
-        else
-        {
-            chatting = false;
-        }
+        chatting = true;
+    }
+
+    public void ChatboxDeselect()
+    {
+        chatting = false;
     }
 
     public void leaveGame()

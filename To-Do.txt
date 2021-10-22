@@ -1,8 +1,8 @@
 ﻿DONE__________
 Health Bars in UserTag
 Footstep Sounds
+Working chat
 ______________
-
 
 Timer
 
@@ -10,10 +10,6 @@ if (photonnetwork.ismasterclient)
 {
 spawn timer, sends out current time to all players thru rpc
 }
-
-
-Working chat
-fix text chat wrapping stuff
 
 *
 

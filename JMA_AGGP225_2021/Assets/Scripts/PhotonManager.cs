@@ -13,6 +13,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     string gameVersion = "v1.4";
 
     public string myUsername;
+    public Color myColor;
     public bool canConnect;
 
     RoomOptions roomOptions = new RoomOptions();

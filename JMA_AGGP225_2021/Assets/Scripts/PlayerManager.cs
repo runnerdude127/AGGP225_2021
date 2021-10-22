@@ -76,7 +76,7 @@ public class PlayerManager : MonoBehaviour
 
         if (gameObject.GetPhotonView().IsMine)
         {
-            color = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
+            color = PhotonManager.instance.myColor;
             testColor = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
             PlayerGUI.instance.colorUI.color = color;
             PlayerGUI.instance.healthColor.color = color;
@@ -105,6 +105,18 @@ public class PlayerManager : MonoBehaviour
             {
                 horizontal = Input.GetAxis("Horizontal") * speed;
                 vertical = Input.GetAxis("Vertical") * speed;
+                if (characterController.isGrounded)
+                {
+                    if (Input.GetKey(KeyCode.Space))
+                    {
+                        gameObject.GetPhotonView().RPC("playJumpSound", RpcTarget.All);
+                        velocity = jumpSpeed;
+                    }
+                    else
+                    {
+                        velocity = 0;
+                    }
+                }
             }
             else
             {
@@ -114,19 +126,7 @@ public class PlayerManager : MonoBehaviour
 
             AnimationHandler();
 
-            if (characterController.isGrounded)
-            {
-                if (Input.GetKey(KeyCode.Space))
-                {
-                    gameObject.GetPhotonView().RPC("playJumpSound", RpcTarget.All);
-                    velocity = jumpSpeed;
-                }
-                else
-                {
-                    velocity = 0;
-                }
-
-            }
+            
             velocity += Physics.gravity.y * Time.deltaTime;
 
             camDir = cam.GetCameraDirection();
