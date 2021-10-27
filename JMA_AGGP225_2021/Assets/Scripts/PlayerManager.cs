@@ -59,6 +59,8 @@ public class PlayerManager : MonoBehaviour
 
     private void Awake()
     {
+        
+
         source = gameObject.GetComponent<AudioSource>();
         characterController = gameObject.GetComponent<CharacterController>();
         playerColor = gameObject.GetComponentInChildren<MeshRenderer>().material;

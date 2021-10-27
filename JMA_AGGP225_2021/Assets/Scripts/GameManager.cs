@@ -11,6 +11,15 @@ public class GameManager : MonoBehaviour
     //public Camera playerCamera;
     public GameObject playerPrefab;
     public List<GameObject> spawnPoints = new List<GameObject>();
+    public GameObject timer;
+
+    private void Awake()
+    {
+        if (PhotonNetwork.IsMasterClient)
+        {
+            timer = PhotonNetwork.Instantiate(timer.name, transform.position, Quaternion.identity);
+        }
+    }
 
     private void Start()
     {
@@ -29,7 +38,5 @@ public class GameManager : MonoBehaviour
         {
             Debug.Log("playerPrefab not set. [GameManager][Start]");
         }
-    }
-
-    
+    } 
 }

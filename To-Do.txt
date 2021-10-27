@@ -5,14 +5,7 @@ Working chat
 ______________
 
 Timer
-
-if (photonnetwork.ismasterclient)
-{
-spawn timer, sends out current time to all players thru rpc
-}
-
 *
-
 Lobby (Give each scene a quit button)
 Title - Connect to master
  |

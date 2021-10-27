@@ -11,6 +11,7 @@ public class PlayerGUI : MonoBehaviour
     public bool chatting = false;
     public GameObject pauseMenu;
     public TMP_InputField chatBox;
+    public TextMeshProUGUI timerText;
 
     public Image colorUI;
     public Meter thisPlayerHealth;
