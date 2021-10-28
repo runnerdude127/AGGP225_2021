@@ -6,6 +6,10 @@ Timer
 Join and Leave Messages
 ______________
 
+issues to fix:
+pressing escape while chatting leads to lockup weirdness
+strafing momentum causes most shots to do no damage but still play a hitconfirm sound
+
 Lobby (Give each scene a quit button)
 Title - Connect to master
  |
