@@ -22,19 +22,32 @@ public class ChatroomManager : MonoBehaviour
     {
         if(!string.IsNullOrEmpty(messageInput.text))
         {
-            Debug.Log("1: " + gameObject.name);
-            Debug.Log("3: " + PhotonManager.instance.myUsername);
-            Debug.Log("4: " + messageInput.text);
             gameObject.GetPhotonView().RPC("UpdateChatroom", RpcTarget.AllBuffered, PhotonManager.instance.myUsername, messageInput.text);
             messageInput.text = "";
         }
+    }
+
+    public void consoleMessage(string status)
+    {
+        gameObject.GetPhotonView().RPC(status, RpcTarget.AllBuffered, PhotonManager.instance.myUsername);
     }
 
 
     [PunRPC]
     void UpdateChatroom(string _username, string _chat)
     {
-        Debug.Log(_username + ": " + _chat + "\n");
         field.text += _username + ": " + _chat + "\n";
+    }
+
+    [PunRPC]
+    void JoinGameMessage(string _username)
+    {
+        field.text += _username + " joined the game." + "\n";
+    }
+
+    [PunRPC]
+    void LeaveGameMessage(string _username)
+    {
+        field.text += _username + " left the game." + "\n";
     }
 }

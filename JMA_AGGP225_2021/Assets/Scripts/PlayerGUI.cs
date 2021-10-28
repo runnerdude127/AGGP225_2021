@@ -137,6 +137,7 @@ public class PlayerGUI : MonoBehaviour
 
     public void leaveGame()
     {
+        ChatroomManager.instance.consoleMessage("LeaveGameMessage");
         PhotonManager.instance.LeaveRoom();
     }
 }

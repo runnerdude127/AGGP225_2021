@@ -13,6 +13,13 @@ public class RGBChanger : MonoBehaviour
     public Slider g;
     public Slider b;
 
+    private void Start()
+    {
+        r.value = PhotonManager.instance.myColor.r;
+        g.value = PhotonManager.instance.myColor.g;
+        b.value = PhotonManager.instance.myColor.b;
+    }
+
     void Update()
     {
         currentColor = new Color(r.value, g.value, b.value);

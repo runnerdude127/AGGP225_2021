@@ -8,6 +8,7 @@ using Photon.Pun;
 public class GameTimer : MonoBehaviour
 {
     public int timeLimit = 100;
+    [SerializeField]
     int currentTime;
     public TextMeshProUGUI myTimer;
 
@@ -17,15 +18,18 @@ public class GameTimer : MonoBehaviour
 
         currentTime = timeLimit;
         myTimer.text = currentTime.ToString();
-        StartCoroutine(timerCycle());
+        StartCoroutine(timerCycle());   
     }
 
     IEnumerator timerCycle()
     {
         yield return new WaitForSeconds(1f);
-        currentTime = currentTime - 1;
-        gameObject.GetPhotonView().RPC("timeSet", RpcTarget.AllBufferedViaServer, currentTime);
-        if (currentTime >= 0)
+        if (PhotonNetwork.IsMasterClient)
+        {
+            currentTime = currentTime - 1;
+            gameObject.GetPhotonView().RPC("timeSet", RpcTarget.AllBufferedViaServer, currentTime);
+        }
+        if (currentTime > 0)
         {
             StartCoroutine(timerCycle());
         }
@@ -34,6 +38,15 @@ public class GameTimer : MonoBehaviour
     [PunRPC]
     public void timeSet(int timeToSet)
     {
-        myTimer.text = timeToSet.ToString();
+        currentTime = timeToSet;
+        updateTime(timeToSet);
+    }
+
+    public void updateTime(int timeToSet)
+    {
+        if (myTimer)
+        {
+            myTimer.text = timeToSet.ToString();
+        }
     }
 }

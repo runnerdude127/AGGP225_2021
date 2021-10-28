@@ -2,10 +2,10 @@
 Health Bars in UserTag
 Footstep Sounds
 Working chat
+Timer
+Join and Leave Messages
 ______________
 
-Timer
-*
 Lobby (Give each scene a quit button)
 Title - Connect to master
  |

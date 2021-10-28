@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 using Photon.Pun;
 using Photon.Realtime;
@@ -12,7 +13,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     /// </summary>
     string gameVersion = "v1.4";
 
-    public string myUsername;
+    public string myUsername = "";
     public Color myColor;
     public bool canConnect;
 
@@ -32,6 +33,8 @@ public class PhotonManager : MonoBehaviourPunCallbacks
             instance = this;
             DontDestroyOnLoad(this);
         }
+
+        myColor = new Color(1, 0, 0);
 
         PhotonNetwork.AutomaticallySyncScene = true;
         roomOptions.MaxPlayers = 4;
@@ -94,7 +97,10 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     }
     public override void OnJoinedRoom()
     {        
-        PhotonNetwork.LoadLevel(gameplayLevel);
+        if (PhotonNetwork.IsMasterClient)
+        {
+            PhotonNetwork.LoadLevel(gameplayLevel);
+        }      
         Debug.Log("Connected to Room '" + PhotonNetwork.CurrentRoom.Name + "'. [PhotonManager][OnCreatedRoom]");
         MainMenuUI.instance.UpdateLog("Connected to Room '" + PhotonNetwork.CurrentRoom.Name + "'.");
     }
@@ -102,7 +108,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     {
         Debug.Log("Left Room. [PhotonManager][OnLeftRoom]");
         MainMenuUI.instance.UpdateLog("Left the room.");
-        PhotonNetwork.LoadLevel("SampleScene");
+        SceneManager.LoadScene("SampleScene");
     }
     #endregion
 

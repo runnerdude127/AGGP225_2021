@@ -50,6 +50,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   timeLimit: 100
+  currentTime: 0
   myTimer: {fileID: 0}
 --- !u!114 &7861859545838806548
 MonoBehaviour:

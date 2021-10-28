@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 using Photon.Pun;
 using Photon.Realtime;
 
-public class GameManager : MonoBehaviour
+public class GameManager : MonoBehaviourPunCallbacks
 {
     //public Camera playerCamera;
     public GameObject playerPrefab;
@@ -15,10 +15,12 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        if (PhotonNetwork.IsMasterClient)
-        {
-            timer = PhotonNetwork.Instantiate(timer.name, transform.position, Quaternion.identity);
-        }
+
+    }
+
+    private void Update()
+    {
+        
     }
 
     private void Start()
@@ -33,10 +35,16 @@ public class GameManager : MonoBehaviour
         {
             GameObject spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Count)];
             PhotonNetwork.Instantiate(playerPrefab.name, spawnPoint.transform.position, spawnPoint.transform.rotation);
+            Debug.Log("instantiate has been called from " + PhotonManager.instance.myUsername);
         }
         else
         {
             Debug.Log("playerPrefab not set. [GameManager][Start]");
         }
-    } 
+    }
+
+    public override void OnDisconnected(DisconnectCause cause)
+    {
+        ChatroomManager.instance.consoleMessage("LeaveGameMessage");
+    }
 }

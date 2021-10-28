@@ -1075,6 +1075,7 @@ MonoBehaviour:
   color: {r: 0, g: 0, b: 0, a: 0}
   testColor: {r: 0, g: 0, b: 0, a: 0}
   playerColor: {fileID: 0}
+  myNose: {fileID: 7404559083500660060}
   shootPos: {fileID: 5343568716233559130}
   rayShot: {fileID: 2038704075603031726, guid: 40ca3f73123cec143b5f283fc8bac0da, type: 3}
   userTag: {fileID: 6825745940992133072}

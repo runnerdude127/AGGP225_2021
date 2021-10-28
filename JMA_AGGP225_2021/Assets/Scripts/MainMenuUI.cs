@@ -50,6 +50,10 @@ public class MainMenuUI : MonoBehaviour
     {
         UnityEngine.Cursor.lockState = CursorLockMode.None;
         UnityEngine.Cursor.visible = true;
+        if (usernameField)
+        {
+            usernameField.text = PhotonManager.instance.myUsername;
+        }
         //colorUIRenderer = colorUI.GetComponent<Renderer>();
     }
 
@@ -98,17 +102,7 @@ public class MainMenuUI : MonoBehaviour
             if (!string.IsNullOrEmpty(usernameField.text))
             {
                 PhotonManager.instance.myUsername = usernameField.text;
-
-                if (colorRef)
-                {
-                    playerStartColor = colorRef.color;
-                    PhotonManager.instance.myColor = playerStartColor;
-                }
-                else
-                {
-                    PhotonManager.instance.myColor = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
-                }
-                
+                playerCreate();
                 PhotonManager.instance.CreateRoom();
             }
             else
@@ -129,6 +123,7 @@ public class MainMenuUI : MonoBehaviour
             if (!string.IsNullOrEmpty(usernameField.text))
             {
                 PhotonManager.instance.myUsername = usernameField.text;
+                playerCreate();
                 PhotonManager.instance.JoinRandomRoom();
             }
             else
@@ -151,6 +146,19 @@ public class MainMenuUI : MonoBehaviour
     public void OnQuit()
     {
         Application.Quit();
+    }
+
+    public void playerCreate()
+    {
+        if (colorRef)
+        {
+            playerStartColor = colorRef.color;
+            PhotonManager.instance.myColor = playerStartColor;
+        }
+        else
+        {
+            PhotonManager.instance.myColor = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
+        }
     }
     #endregion
 }

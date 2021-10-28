@@ -22,6 +22,7 @@ public class PlayerManager : MonoBehaviour
     public Material playerColor;
     // opposite : new Color(1.0f - color.r, 1.0f - color.g, 1.0f - color.b);
 
+    public GameObject myNose;
     public Transform shootPos;
     public GameObject rayShot;
 
@@ -59,8 +60,6 @@ public class PlayerManager : MonoBehaviour
 
     private void Awake()
     {
-        
-
         source = gameObject.GetComponent<AudioSource>();
         characterController = gameObject.GetComponent<CharacterController>();
         playerColor = gameObject.GetComponentInChildren<MeshRenderer>().material;
@@ -77,14 +76,21 @@ public class PlayerManager : MonoBehaviour
         PlayerGUI.instance.thisPlayerCharge.SetMax(charge);
 
         if (gameObject.GetPhotonView().IsMine)
-        {
+        {  
             color = PhotonManager.instance.myColor;
+            Debug.Log("r: " + color.r + "g: " + color.g + "b: " + color.b);
             testColor = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
             PlayerGUI.instance.colorUI.color = color;
             PlayerGUI.instance.healthColor.color = color;
-            playerColor.color = color;
+            playerColor.color = color;           
             gameObject.GetPhotonView().RPC("playerColorChange", RpcTarget.AllBufferedViaServer, color.r, color.g, color.b);
             gameObject.GetPhotonView().RPC("playerTagUpdate", RpcTarget.AllBufferedViaServer, PhotonManager.instance.myUsername);
+
+            ChatroomManager.instance.consoleMessage("JoinGameMessage");
+
+            userTag.GetComponentInChildren<Canvas>().enabled = false;
+            myNose.GetComponent<MeshRenderer>().enabled = false;
+            myName.gameObject.GetComponent<MeshRenderer>().enabled = false;
         }
     }
 
