@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class MainMenuUI : MonoBehaviour
 {
@@ -103,7 +104,8 @@ public class MainMenuUI : MonoBehaviour
             {
                 PhotonManager.instance.myUsername = usernameField.text;
                 playerCreate();
-                PhotonManager.instance.CreateRoom();
+                //PhotonManager.instance.CreateRoom();
+                SceneManager.LoadScene("Lobby");
             }
             else
             {

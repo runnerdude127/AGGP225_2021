@@ -11,15 +11,16 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     /// <summary>
     /// current game version
     /// </summary>
-    string gameVersion = "v1.4";
+    string gameVersion = "indev 1.5";
 
-    public string myUsername = "";
+    public string myUsername = "BIG DUMB IDIOT";
     public Color myColor;
     public bool canConnect;
 
-    RoomOptions roomOptions = new RoomOptions();
+    //RoomOptions roomOptions = new RoomOptions();
     string gameplayLevel = "InRoom";
-    public int timer = 100;
+    public int timer;
+    int gm;
 
     public static PhotonManager instance { get; private set; }
     void Awake()
@@ -37,7 +38,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         myColor = new Color(1, 0, 0);
 
         PhotonNetwork.AutomaticallySyncScene = true;
-        roomOptions.MaxPlayers = 4;
+        //roomOptions.MaxPlayers = 4;
     }
 
     void Start()
@@ -67,11 +68,14 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     }
 
     #region Photon Callbacks
-    public void CreateRoom()
+    public void CreateRoom(string roomName, RoomOptions roomOptions, int timeLim, int gamemode)
     {
+        timer = timeLim;
+        gm = gamemode;
+        
         Debug.Log("Creating room... [PhotonManager][CreateRoom]");
         MainMenuUI.instance.UpdateLog("Creating room...");
-        PhotonNetwork.CreateRoom("MyCoolRoom", roomOptions);
+        PhotonNetwork.CreateRoom(roomName, roomOptions);
     }
     public void JoinRandomRoom()
     {
