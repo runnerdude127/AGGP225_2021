@@ -8,21 +8,36 @@ ______________
 
 issues to fix:
 pressing escape while chatting leads to lockup weirdness
-strafing momentum causes most shots to do no damage but still play a hitconfirm sound
+strafing momentum causes most shots to do no damage but still play a hitconfirm sound... was this a photon-related issue?
 
 Lobby (Give each scene a quit button)
-Title - Connect to master
- |
- V
-Lobby - Show all players in room. Auto start when room is full. Working chat.
- |
- V
-In Game
 
-• There is a winner at the end of the game
-• After the game ends, it sends the players in the room back to the lobby
-• If there are already 4 players in the lobby, it waits ~5 seconds before putting everyone back into a game
-• If there are less than 4 players in the lobby, it waits until another player enters the room to begin the next match
+Title - Connects to master, allows the player to 
+
+Create a Room
+Enter a Room
+
+These cannot be done until the player's username is set.
+
+ |
+ V
+
+Lobby - Show all players in room. Auto start when room is full. Working chat.
+
+Server List -> Room -> Game
+Create Room -> Room -> Game
+
+In order for a game to start, the room must be full or the host must start it manually.
+
+ |
+ V
+
+In Game - The game uses all the info created in the "Create Room" section.
+
+Game -> Time runs out -> Room
+Game -> Win condition met -> Room
+
+The game returns to the room lobby with updated scores. Given that the room is still full, the game will start back up again after a 10 second wait.
 
 *
 

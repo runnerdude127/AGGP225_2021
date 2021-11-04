@@ -7,7 +7,7 @@ using Photon.Pun;
 
 public class GameTimer : MonoBehaviour
 {
-    public int timeLimit = 100;
+    public int timeLimit;
     [SerializeField]
     int currentTime;
     public TextMeshProUGUI myTimer;
@@ -16,6 +16,7 @@ public class GameTimer : MonoBehaviour
     {
         myTimer = PlayerGUI.instance.timerText.GetComponent<TextMeshProUGUI>();
 
+        timeLimit = PhotonManager.instance.timer;
         currentTime = timeLimit;
         myTimer.text = currentTime.ToString();
         StartCoroutine(timerCycle());   

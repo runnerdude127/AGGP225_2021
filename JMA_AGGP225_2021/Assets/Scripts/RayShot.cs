@@ -8,6 +8,8 @@ using Photon.Realtime;
 
 public class RayShot : MonoBehaviour
 {
+    public int damage = 10;
+
     public float lifetime;
     public float currentLife;
 
@@ -50,27 +52,46 @@ public class RayShot : MonoBehaviour
             transform.localPosition += (transform.forward * hit.distance / 2);
             Debug.DrawRay(transform.position, this.transform.forward * hit.distance, Color.yellow, 10);
             Instantiate(hitEffect, hit.point, Quaternion.identity);
-            Debug.Log("Did Hit: " + hit.transform.gameObject.name);
-            if (hit.transform.gameObject.tag == "Player")
+            
+            InGameActor hitActor = hit.transform.gameObject.GetComponentInParent<InGameActor>();
+            if (hitActor)
             {
-                Debug.Log("BINGO");
-                PlayerManager playerHit = hit.transform.gameObject.GetComponent<PlayerManager>();
-                PlayerManager shooter = myFirer.transform.gameObject.GetComponent<PlayerManager>();
+                Debug.Log("Hit an Actor!");
+                Character hitCharacter = hit.transform.gameObject.GetComponentInParent<Character>();
+                if (hitCharacter)
+                {
+                    Debug.Log("It's a Character!");
+                    PlayerManager playerHit = hit.transform.gameObject.GetComponentInParent<PlayerManager>();
+                    if (playerHit)
+                    {
+                        Debug.Log("A player Character!");
 
-                if (shooter.gameObject.GetPhotonView().IsMine)
-                {
-                    shooter.playHitConfirmSound();
-                }              
-                if (playerHit)
-                {
-                    //playerHit.gameObject.GetPhotonView().RPC("playerHurt", RpcTarget.All, 10, color.r, color.g, color.b);
-                    playerHit.playerHurt(10, color.r, color.g, color.b);
+                        //PlayerManager playerHit = hit.transform.gameObject.GetComponent<PlayerManager>();
+                        PlayerManager shooter = myFirer.transform.gameObject.GetComponent<PlayerManager>();
+
+                        //playerHit.gameObject.GetPhotonView().RPC("playerHurt", RpcTarget.All, 10, color.r, color.g, color.b);
+                        playerHit.playerHurt(damage, color.r, color.g, color.b);
+                        if (shooter.gameObject.GetPhotonView().IsMine)
+                        {
+                            shooter.playHitConfirmSound();
+                        }
+                    }
+                    else
+                    {
+                        PlayerManager shooter = myFirer.transform.gameObject.GetComponent<PlayerManager>();
+                        hitCharacter.changeHealth(damage * -1);
+                        if (shooter.gameObject.GetPhotonView().IsMine)
+                        {
+                            shooter.playHitConfirmSound();
+                        }
+                    }
                 }
                 else
                 {
-                    Debug.Log("This guy has no PlayerManager.");
+                    hitActor.changeHealth(damage * -1);
                 }
             }
+            Debug.Log("Hit This: " + hit.transform.gameObject.name);
         }
         else
         {

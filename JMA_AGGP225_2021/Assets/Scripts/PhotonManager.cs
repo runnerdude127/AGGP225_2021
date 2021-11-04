@@ -87,23 +87,37 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     {
         Debug.Log("Leaving... [PhotonManager][LeaveRoom]");
         MainMenuUI.instance.UpdateLog("Leaving...");
-        CameraManagaer.instance.isFollowing = false;
-        UnityEngine.Cursor.lockState = CursorLockMode.None;
-        UnityEngine.Cursor.visible = true;
+
+        if (CameraManagaer.instance)
+        {
+            CameraManagaer.instance.isFollowing = false;
+            UnityEngine.Cursor.lockState = CursorLockMode.None;
+            UnityEngine.Cursor.visible = true;
+        }
+        
         PhotonNetwork.LeaveRoom();
+    }
+
+    public void StartGame()
+    {
+        Debug.Log("Starting the Game... [PhotonManager][StartGame]");
+        MainMenuUI.instance.UpdateLog("Starting...");
+        if (PhotonNetwork.IsMasterClient)
+        {
+            PhotonNetwork.LoadLevel(gameplayLevel);
+        }
     }
 
     public override void OnCreatedRoom()
     {
         Debug.Log("Room '" + PhotonNetwork.CurrentRoom.Name + "' created. [PhotonManager][OnCreatedRoom]");
         MainMenuUI.instance.UpdateLog("Room '" + PhotonNetwork.CurrentRoom.Name + "' created.");
-        //StartCoroutine(GameTime());
     }
     public override void OnJoinedRoom()
     {        
         if (PhotonNetwork.IsMasterClient)
         {
-            PhotonNetwork.LoadLevel(gameplayLevel);
+            //PhotonNetwork.LoadLevel(gameplayLevel);
         }      
         Debug.Log("Connected to Room '" + PhotonNetwork.CurrentRoom.Name + "'. [PhotonManager][OnCreatedRoom]");
         MainMenuUI.instance.UpdateLog("Connected to Room '" + PhotonNetwork.CurrentRoom.Name + "'.");
@@ -141,20 +155,5 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     void UsernameRPC(string _username, string _chat)
     {
         Username.instance.usernameText.text = _username + ": " + _chat;
-    }
-
-    [PunRPC]
-    IEnumerator GameTime()
-    {
-        yield return new WaitForSeconds(1f);
-        timer = timer - 1;
-        if (timer <= 0)
-        {
-            LeaveRoom();
-        }
-        else
-        {
-            StartCoroutine(GameTime());
-        }
     }
 }

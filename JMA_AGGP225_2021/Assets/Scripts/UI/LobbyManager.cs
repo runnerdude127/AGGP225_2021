@@ -124,4 +124,9 @@ public class LobbyManager : MonoBehaviour
     {
         PhotonManager.instance.LeaveRoom();
     }
+
+    public void startGame() // start game
+    {
+        PhotonManager.instance.StartGame();
+    }
 }

@@ -6,74 +6,71 @@ using Photon.Pun;
 using Photon.Pun.Demo.PunBasics;
 using Photon.Realtime;
 
-public class PlayerManager : MonoBehaviour
+public class PlayerManager : Character
 {
-    public float speed = 5f;
-    public float jumpSpeed = 1f;
-    public int health = 100;
-    int currentHealth;
-    public int charge = 100;
-    int currentCharge;
-    float chargeSpeed = 1;
-    bool cooldownCharge = false;
+    #region GUI
+
+    public Meter healthBar;
+    public Meter chargeBar;
+
+    #endregion
+
+    #region Player Color
 
     public Color color;
     public Color testColor;
     public Material playerColor;
     // opposite : new Color(1.0f - color.r, 1.0f - color.g, 1.0f - color.b);
 
+    Color oldColor;
+    Color colorInflict;
+
+    #endregion
+
+    #region Weapon Management
+
     public GameObject myNose;
     public Transform shootPos;
     public GameObject rayShot;
 
-    public GameObject userTag;
-    public TextMesh myName;
-    private Meter headHealthBar;
+    #endregion
 
-    public Meter healthBar;
-    public Meter chargeBar;
-
-    public CharacterController characterController;
-    float horizontal;
-    float vertical;
-    float velocity;
+    #region Camera Management
 
     CameraManagaer cam;
     Vector3 camDir;
 
-    AudioSource source;
-    //online
+    #endregion
+
+    #region Sound Management
+
+    // Server-side
     bool walkcycle = false;
     public AudioClip footstep;
     public AudioClip jump;
     public AudioClip colorChange;
     public AudioClip takeDamage;
     public AudioClip shoot;
-    //client
+
+    // Client-side
     public AudioClip chargeSound;
     public AudioClip fullyCharged;
-    public AudioClip chargeDepleted;
+    public AudioClip chargeDeplete;
     public AudioClip noCharge;
     public AudioClip hitConfirm;
 
-    public Animator playerAnim;
+    #endregion
 
-    private void Awake()
+    public override void Awake()
     {
-        source = gameObject.GetComponent<AudioSource>();
-        characterController = gameObject.GetComponent<CharacterController>();
-        playerColor = gameObject.GetComponentInChildren<MeshRenderer>().material;
-        cam = gameObject.GetComponent<CameraManagaer>();
-        playerAnim = gameObject.GetComponentInChildren<Animator>();
-        myName = userTag.GetComponentInChildren<TextMesh>();
-        headHealthBar = GetComponentInChildren<Meter>();
+        base.Awake();
 
-        currentHealth = health;
+        PlayerGUI.instance.thisPlayerCharge.SetMax(charge);
         PlayerGUI.instance.thisPlayerHealth.SetMax(health);
 
-        StartCoroutine(ChargeBack());
-        currentCharge = charge;
-        PlayerGUI.instance.thisPlayerCharge.SetMax(charge);
+        playerColor = gameObject.GetComponentInChildren<MeshRenderer>().material;
+        cam = gameObject.GetComponent<CameraManagaer>();
+        
 
         if (gameObject.GetPhotonView().IsMine)
         {  
@@ -88,15 +85,16 @@ public class PlayerManager : MonoBehaviour
 
             ChatroomManager.instance.consoleMessage("JoinGameMessage");
 
-            userTag.GetComponentInChildren<Canvas>().enabled = false;
+            myNameTag.GetComponentInChildren<Canvas>().enabled = false;
             myNose.GetComponent<MeshRenderer>().enabled = false;
             myName.gameObject.GetComponent<MeshRenderer>().enabled = false;
         }
     }
 
-    private void Update()
+    public override void Update()
     {
-        userTag.transform.rotation = Quaternion.LookRotation(userTag.transform.position - Camera.main.transform.position);
+        base.Update();
+
         if (gameObject.GetPhotonView().IsMine)
         {
             gameObject.GetPhotonView().RPC("setShoot", RpcTarget.All);
@@ -107,83 +105,10 @@ public class PlayerManager : MonoBehaviour
             PlayerGUI.instance.healthColor.color = color;
             playerColor.color = color;
 
-            //Debug.Log("grounded: " + characterController.isGrounded + " velocity: " + velocity);
-
-            if (PlayerGUI.instance.playerKeyInput == true)
-            {
-                horizontal = Input.GetAxis("Horizontal") * speed;
-                vertical = Input.GetAxis("Vertical") * speed;
-                if (characterController.isGrounded)
-                {
-                    if (Input.GetKey(KeyCode.Space))
-                    {
-                        gameObject.GetPhotonView().RPC("playJumpSound", RpcTarget.All);
-                        velocity = jumpSpeed;
-                    }
-                    else
-                    {
-                        velocity = 0;
-                    }
-                }
-            }
-            else
-            {
-                horizontal = 0;
-                vertical = 0;
-            }
-
-            AnimationHandler();
-
-            
-            velocity += Physics.gravity.y * Time.deltaTime;
-
             camDir = cam.GetCameraDirection();
             if (cam != null)
             {
                 cam.OnStartFollowing();
-            }
-
-            characterController.Move((gameObject.transform.right * horizontal + gameObject.transform.forward * vertical + (new Vector3(0, 1, 0) * velocity)) * Time.deltaTime);
-
-            if (PlayerGUI.instance.playerMouseInput == true)
-            {
-                gameObject.transform.rotation = Quaternion.Euler(gameObject.transform.eulerAngles.x, camDir.y, gameObject.transform.eulerAngles.z);
-
-                if (Input.GetKeyDown(KeyCode.Mouse0))
-                {
-                    if (!cooldownCharge)
-                    {
-                        if ((currentCharge - 2) >= 0)
-                        {
-                            //gameObject.GetPhotonView().RPC("shootWeapon", RpcTarget.All, color.r, color.g, color.b);
-                            shootWeapon(color.r, color.g, color.b);
-                            PlayerGUI.instance.thisPlayerCharge.ResetMeter(currentCharge);
-                            currentCharge = currentCharge - 2;
-                            chargeSpeed = 1;
-                        }
-                        else
-                        {
-                            //gameObject.GetPhotonView().RPC("shootWeapon", RpcTarget.All, color.r, color.g, color.b);
-                            shootWeapon(color.r, color.g, color.b);
-                            PlayerGUI.instance.thisPlayerCharge.ResetMeter(currentCharge);
-                            currentCharge = 0;
-                            cooldownCharge = true;
-                            source.PlayOneShot(chargeDepleted);
-                        }
-                    }
-                    else
-                    {
-                        source.PlayOneShot(noCharge);
-                    }
-
-                }
-
-                if (Input.GetKeyDown(KeyCode.Mouse1))
-                {
-                    gameObject.GetPhotonView().RPC("playerHurt", RpcTarget.All, 10, testColor.r, testColor.g, testColor.b);
-                    //gameObject.GetPhotonView().RPC("playerColorChange", RpcTarget.AllBufferedViaServer, testColor.r, testColor.g, testColor.b);
-                    //testColor = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
-                }
             }
 
             if (cooldownCharge)
@@ -194,38 +119,121 @@ public class PlayerManager : MonoBehaviour
             {
                 PlayerGUI.instance.chargeColor.color = new Color(1, 1, 1);
             }
+
+            if (PlayerGUI.instance.playerKeyInput == true)              // If the player is allowed to use their keyboard for in-game processing...
+            {
+                moveBy();
+            }
+            else                                                        // Otherwise, KILL ALL MOVEMENT!!
+            {
+                killMovement();
+            }
+
+            if (PlayerGUI.instance.playerMouseInput == true)            // If the player is allowed to use their mouse for in-game processing...
+            {
+                gameObject.transform.rotation = Quaternion.Euler(gameObject.transform.eulerAngles.x, camDir.y, gameObject.transform.eulerAngles.z); // Player points towards mouse direction.
+
+                if (Input.GetKeyDown(KeyCode.Mouse0))                   // Left Click
+                {
+                    chargeAction();
+                }
+
+                if (Input.GetKeyDown(KeyCode.Mouse1))                   // Right Click
+                {
+                    gameObject.GetPhotonView().RPC("playerHurt", RpcTarget.All, 10, testColor.r, testColor.g, testColor.b);
+                }
+            }
         }
     }
 
-    IEnumerator ChargeBack()
+    public override void AnimationHandler()
     {
-        yield return new WaitForSeconds(chargeSpeed);
-        //source.PlayOneShot(chargeSound, currentCharge);
-        currentCharge = currentCharge + 1;
-        if (currentCharge < charge)
+        myAnim.SetBool("grounded", characterController.isGrounded);
+        if (horizontal != 0 || vertical != 0)
         {
-            if (chargeSpeed <= .02f)
+            myAnim.SetBool("walking", true);
+            if (walkcycle == false)
             {
-                chargeSpeed = .02f;
+                StartCoroutine(stepcycle());
             }
-            else
-            {
-                chargeSpeed = chargeSpeed / 1.5f;
-            }
-            StartCoroutine(ChargeBack());
         }
         else
         {
-            if (currentCharge > charge)
-            {
-                currentCharge = charge;
-            }
-            cooldownCharge = false;
-            source.PlayOneShot(fullyCharged);
-            yield return new WaitUntil(() => currentCharge < charge);
-            chargeSpeed = 1;
-            StartCoroutine(ChargeBack());
+            myAnim.SetBool("walking", false);
         }
+
+        if (characterController.isGrounded)
+        {
+            if (Input.GetKey(KeyCode.Space))
+            {
+                myAnim.SetBool("jumping", true);
+            }
+            else
+            {
+                myAnim.SetBool("jumping", false);
+            }
+        }
+    }
+
+    public override void onJumping()
+    {
+        gameObject.GetPhotonView().RPC("playJumpSound", RpcTarget.All);
+    }
+
+    #region Health Functions
+    public override void onDamaged()
+    {
+        myAnim.ResetTrigger("damage");
+        myAnim.SetTrigger("damage");
+
+        gameObject.GetPhotonView().RPC("playDamageSound", RpcTarget.All);
+        PlayerGUI.instance.infectColor.color = colorInflict;
+        gameObject.GetPhotonView().RPC("updateHealth", RpcTarget.AllBufferedViaServer, colorInflict.r, colorInflict.g, colorInflict.b);
+    }
+
+    public override void onHealed()
+    {
+        gameObject.GetPhotonView().RPC("updateHealth", RpcTarget.AllBufferedViaServer, oldColor.r, oldColor.g, oldColor.b);
+        PlayerGUI.instance.thisPlayerHealth.ResetMeter(currentHealth);
+    }
+
+    public override void healthDepleted()
+    {
+        gameObject.GetPhotonView().RPC("playColorSound", RpcTarget.All);
+        gameObject.GetPhotonView().RPC("playerColorChange", RpcTarget.AllBufferedViaServer, colorInflict.r, colorInflict.g, colorInflict.b);
+        currentHealth = health;
+        PlayerGUI.instance.thisPlayerHealth.ResetMeter(currentHealth);
+    }
+
+    #endregion
+
+    #region Charge Functions
+    public override void chargeDepleted()
+    {
+        source.PlayOneShot(chargeDeplete);
+    }
+
+    public override void chargeFilled()
+    {
+        source.PlayOneShot(fullyCharged);
+    }
+
+    public override void commitChargeAction()
+    {
+        shootWeapon(color.r, color.g, color.b);
+        PlayerGUI.instance.thisPlayerCharge.ResetMeter(currentCharge);
+    }
+
+    public override void invalidChargeAction()
+    {
+        source.PlayOneShot(noCharge);
+    }
+
+    #endregion
+
+    public void playHitConfirmSound()
+    {
+        source.PlayOneShot(hitConfirm);
     }
 
     void shootWeapon(float r, float g, float b)
@@ -238,12 +246,11 @@ public class PlayerManager : MonoBehaviour
             gameObject.GetPhotonView().RPC("setShoot", RpcTarget.All); 
         }
         gameObject.GetPhotonView().RPC("makeShot", RpcTarget.All, r, g, b);
-        playerAnim.ResetTrigger("shoot");
-        playerAnim.SetTrigger("shoot");
+        myAnim.ResetTrigger("shoot");
+        myAnim.SetTrigger("shoot");
     }
 
     [PunRPC]
-
     void setShoot()
     {
         if (cam)
@@ -265,55 +272,20 @@ public class PlayerManager : MonoBehaviour
         myShot.parentSet(this.gameObject);
     }
 
-    public void playHitConfirmSound()
-    {
-        source.PlayOneShot(hitConfirm);
-    }
-
-    void AnimationHandler()
-    {
-        playerAnim.SetBool("grounded", characterController.isGrounded);
-        if (horizontal != 0 || vertical != 0)
-        {
-            playerAnim.SetBool("walking", true);
-            if (walkcycle == false)
-            {
-                StartCoroutine(stepcycle());             
-            }
-        }
-        else
-        {
-            playerAnim.SetBool("walking", false);
-        }
-
-        if (characterController.isGrounded)
-        {
-            if (Input.GetKey(KeyCode.Space))
-            {
-                playerAnim.SetBool("jumping", true);
-            }
-            else
-            {
-                playerAnim.SetBool("jumping", false);
-            }
-
-        }
-    }
+    
 
     [PunRPC]
     void playerTagUpdate(string nameSet)
     {
-        headHealthBar = GetComponentInChildren<Meter>();
         headHealthBar.SetMax(health);
         headHealthBar.SetMainColor(playerColor.color);
         this.myName.text = nameSet;
     }
 
     [PunRPC]
-    void updateHealth(int ch, float r, float g, float b)
+    void updateHealth(float r, float g, float b)
     {
         Color c = new Color(r, g, b);
-        headHealthBar.SetCurrent(ch);
         headHealthBar.SetMainColor(playerColor.color);
         headHealthBar.SetLossColor(c);
     }
@@ -323,18 +295,26 @@ public class PlayerManager : MonoBehaviour
     {
         if (gameObject.GetPhotonView().IsMine)
         {
-            Color oldColor = new Color(PlayerGUI.instance.infectColor.color.r, PlayerGUI.instance.infectColor.color.g, PlayerGUI.instance.infectColor.color.b);
-            Color colorInflict = new Color(r, g, b);
-            playerAnim.ResetTrigger("damage");
-            playerAnim.SetTrigger("damage");
+            oldColor = new Color(PlayerGUI.instance.infectColor.color.r, PlayerGUI.instance.infectColor.color.g, PlayerGUI.instance.infectColor.color.b);
+            colorInflict = new Color(r, g, b);
             
+            if (playerColor.color != colorInflict)
+            {
+                changeHealth(damage * -1);
+            }
+            else
+            {
+                changeHealth(damage / 2);
+            }
+            /*
+            myAnim.ResetTrigger("damage");
+            myAnim.SetTrigger("damage");
             if (playerColor.color != colorInflict)
             {
                 gameObject.GetPhotonView().RPC("playDamageSound", RpcTarget.All);
                 currentHealth = currentHealth - damage;
                 PlayerGUI.instance.infectColor.color = colorInflict;
                 gameObject.GetPhotonView().RPC("updateHealth", RpcTarget.AllBufferedViaServer, currentHealth, colorInflict.r, colorInflict.g, colorInflict.b);
-
 
                 if (currentHealth <= 0)
                 {
@@ -352,12 +332,13 @@ public class PlayerManager : MonoBehaviour
                 }
                 else
                 {
-                    currentHealth = currentHealth + damage;
+                    currentHealth = currentHealth + (damage / 2);
                     gameObject.GetPhotonView().RPC("updateHealth", RpcTarget.AllBufferedViaServer, currentHealth, oldColor.r, oldColor.g, oldColor.b);
                 }
                 PlayerGUI.instance.thisPlayerHealth.ResetMeter(currentHealth);
             }
-        }        
+            */
+        }
     }
 
     [PunRPC]
@@ -379,7 +360,7 @@ public class PlayerManager : MonoBehaviour
     IEnumerator stepcycle()
     {
         walkcycle = true;     
-        if (playerAnim.GetBool("walking") == true && playerAnim.GetBool("grounded") == true)
+        if (myAnim.GetBool("walking") == true && myAnim.GetBool("grounded") == true)
         {
             gameObject.GetPhotonView().RPC("playStepSound", RpcTarget.All);
             yield return new WaitForSeconds(.5f);
