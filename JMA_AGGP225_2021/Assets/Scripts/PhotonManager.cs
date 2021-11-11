@@ -112,6 +112,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     {
         Debug.Log("Room '" + PhotonNetwork.CurrentRoom.Name + "' created. [PhotonManager][OnCreatedRoom]");
         MainMenuUI.instance.UpdateLog("Room '" + PhotonNetwork.CurrentRoom.Name + "' created.");
+        LobbyManager.instance.insertPlayer();
     }
     public override void OnJoinedRoom()
     {        

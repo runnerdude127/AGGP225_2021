@@ -9,6 +9,8 @@ using Photon.Realtime;
 
 public class LobbyManager : MonoBehaviour
 {
+    public GameObject playerSlotPrefab;
+    public RectTransform playerlist;
     public TMP_InputField roomNameField;
     public TMP_Dropdown gamemodeDrop;
     public TMP_InputField maxPlayerField;
@@ -18,6 +20,20 @@ public class LobbyManager : MonoBehaviour
     public int gamemode;
     public int maxPlayers = 4;
     public int timeLimit = 300;
+
+    public static LobbyManager instance { get; private set; } // SINGLETON INSTANCE
+
+    void Awake()
+    {
+        if (instance)
+        {
+            Destroy(this);
+        }
+        else
+        {
+            instance = this;
+        }
+    }
 
     public void Start()
     {
@@ -30,6 +46,22 @@ public class LobbyManager : MonoBehaviour
     {
         roomName = roomNameField.text;
         gamemode = gamemodeDrop.value;
+    }
+
+    public void insertPlayer()
+    {
+        if (playerSlotPrefab)
+        {
+            GameObject newSlot = PhotonNetwork.Instantiate(playerSlotPrefab.name, playerlist.transform.position, Quaternion.identity);
+            PlayerSlotInfo slotinfo = newSlot.GetComponent<PlayerSlotInfo>();
+            newSlot.transform.parent = playerlist;
+            slotinfo.infoSet(PhotonManager.instance.myUsername, PhotonManager.instance.myColor);
+            Debug.Log("Slot inserted");
+        }
+        else
+        {
+            Debug.Log("playerSlotPrefab not set. [insertPlayer][Start]");
+        }
     }
 
     public void valChangeManual()
