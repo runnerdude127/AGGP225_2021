@@ -3154,6 +3154,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   createButton: {fileID: 1200840686}
+  joinButton: {fileID: 757408931}
   randomButton: {fileID: 801081722}
   log: {fileID: 2063305361}
   usernameField: {fileID: 14458278}

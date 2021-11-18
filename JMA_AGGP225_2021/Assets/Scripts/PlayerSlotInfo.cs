@@ -4,14 +4,26 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 
-public class PlayerSlotInfo : MonoBehaviour
-{
-    public TMP_Text myName;
-    public Image mySlotBG;
+using Photon.Pun;
+using Photon.Pun.Demo.PunBasics;
+using Photon.Realtime;
 
-    public void infoSet(string name, Color color)
+public class PlayerSlotInfo : InfoSlot
+{
+    public override void Awake()
     {
-        myName.text = name;
-        mySlotBG.color = color;
+        base.Awake();
+        RectTransform pl = LobbyManager.instance.playerlist;
+        this.transform.SetParent(pl);
+
+        if (gameObject.GetPhotonView().IsMine)
+        {
+            infoSet(PhotonManager.instance.myUsername, PhotonManager.instance.myColor);
+        }
+    }
+
+    public override void infoSet(string name, Color bgColor)
+    {
+        base.infoSet(name, bgColor);
     }
 }

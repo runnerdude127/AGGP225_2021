@@ -12,7 +12,13 @@ public class MainMenuUI : MonoBehaviour
     Button createButton;
 
     [SerializeField]
+    Button joinButton;
+
+    [SerializeField]
     Button randomButton;
+
+    [SerializeField]
+    public bool titleButtonClicked;
 
     [SerializeField]
     TMP_Text log;
@@ -66,11 +72,13 @@ public class MainMenuUI : MonoBehaviour
             if (PhotonManager.instance.canConnect)
             {
                 createButton.interactable = true;
+                joinButton.interactable = true;
                 randomButton.interactable = true;
             }
             else
             {
                 createButton.interactable = false;
+                joinButton.interactable = false;
                 randomButton.interactable = false;
             }
         }
@@ -105,6 +113,7 @@ public class MainMenuUI : MonoBehaviour
                 PhotonManager.instance.myUsername = usernameField.text;
                 playerCreate();
                 //PhotonManager.instance.CreateRoom();
+                titleButtonClicked = false;
                 SceneManager.LoadScene("Lobby");
             }
             else
@@ -126,7 +135,8 @@ public class MainMenuUI : MonoBehaviour
             {
                 PhotonManager.instance.myUsername = usernameField.text;
                 playerCreate();
-                PhotonManager.instance.JoinRandomRoom();
+                titleButtonClicked = true;
+                SceneManager.LoadScene("Lobby");                
             }
             else
             {

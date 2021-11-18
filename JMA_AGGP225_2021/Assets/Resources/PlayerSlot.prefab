@@ -267,5 +267,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5db2e8b50ef21a54089cdb1815436fe9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  myName: {fileID: 5496189632614941093}
-  mySlotBG: {fileID: 4768085348153078110}
+  slotName: {fileID: 5496189632614941093}
+  slotBG: {fileID: 4768085348153078110}

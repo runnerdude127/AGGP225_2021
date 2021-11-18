@@ -11,11 +11,17 @@ public class LobbyManager : MonoBehaviour
 {
     public GameObject playerSlotPrefab;
     public RectTransform playerlist;
+    public GameObject roomSlotPrefab;
+    public RectTransform roomlist;
     public TMP_InputField roomNameField;
     public TMP_Dropdown gamemodeDrop;
     public TMP_InputField maxPlayerField;
     public TMP_InputField timeLimitField;
- 
+
+    public GameObject openMenu;
+    public GameObject creationMenu;
+    public GameObject listMenu;
+
     public string roomName = "MyCoolRoom";
     public int gamemode;
     public int maxPlayers = 4;
@@ -40,6 +46,19 @@ public class LobbyManager : MonoBehaviour
         roomNameField.text = roomName;
         maxPlayerField.text = maxPlayers.ToString();
         timeLimitField.text = timeLimit.ToString();
+
+        if (MainMenuUI.instance.titleButtonClicked == true)
+        {
+            listMenu.SetActive(true);
+            creationMenu.SetActive(false);
+            openMenu.SetActive(false);
+        }
+        else
+        {
+            listMenu.SetActive(false);
+            creationMenu.SetActive(true);
+            openMenu.SetActive(false);
+        }
     }
 
     public void Update()
@@ -52,15 +71,29 @@ public class LobbyManager : MonoBehaviour
     {
         if (playerSlotPrefab)
         {
-            GameObject newSlot = PhotonNetwork.Instantiate(playerSlotPrefab.name, playerlist.transform.position, Quaternion.identity);
-            PlayerSlotInfo slotinfo = newSlot.GetComponent<PlayerSlotInfo>();
-            newSlot.transform.parent = playerlist;
-            slotinfo.infoSet(PhotonManager.instance.myUsername, PhotonManager.instance.myColor);
-            Debug.Log("Slot inserted");
+            PhotonNetwork.Instantiate(playerSlotPrefab.name, playerlist.transform.position, Quaternion.identity);
+            Debug.Log("Player Slot inserted");
         }
         else
         {
             Debug.Log("playerSlotPrefab not set. [insertPlayer][Start]");
+        }
+    }
+
+    public void insertRoom(Room roomInfo, int gamemode)
+    {
+        if (roomSlotPrefab)
+        {
+            GameObject newSlot = PhotonNetwork.Instantiate(roomSlotPrefab.name, roomlist.transform.position, Quaternion.identity);
+            RoomInfoSlot slotInfo = newSlot.GetComponent<RoomInfoSlot>();
+            newSlot.transform.SetParent(roomlist);
+            slotInfo.infoSet(roomInfo.Name, new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f)));
+            slotInfo.roomExtras(gamemode, roomInfo.PlayerCount, roomInfo.MaxPlayers);
+            Debug.Log("Room Slot inserted");
+        }
+        else
+        {
+            Debug.Log("roomSlotPrefab not set. [insertRoom][Start]");
         }
     }
 
@@ -136,14 +169,35 @@ public class LobbyManager : MonoBehaviour
     {
         if (PhotonManager.instance != null)
         {
-            RoomOptions roomCreated = new RoomOptions();
-            roomCreated.MaxPlayers = (byte)maxPlayers;
-
-            PhotonManager.instance.CreateRoom(roomName, roomCreated, timeLimit, gamemode);
+            PhotonManager.instance.CreateRoom(roomName, maxPlayers, timeLimit, gamemode);
         }
         else
         {
             Debug.LogError("Unable to create room. Reason: PhotonManager not found");
+        }
+    }
+
+    public void joinRoom()
+    {
+        if (PhotonManager.instance != null)
+        {
+            // join a specific room
+        }
+        else
+        {
+            Debug.LogError("Unable to join room. Reason: PhotonManager not found");
+        }
+    }
+
+    public void randomRoom()
+    {
+        if (PhotonManager.instance != null)
+        {
+            PhotonManager.instance.JoinRandomRoom();
+        }
+        else
+        {
+            Debug.LogError("Unable to join room. Reason: PhotonManager not found");
         }
     }
 
