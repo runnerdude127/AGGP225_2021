@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
+using UnityEngine.UI;
 
 using Photon.Pun;
 using Photon.Realtime;
@@ -18,12 +19,21 @@ public class LobbyManager : MonoBehaviour
     public TMP_InputField maxPlayerField;
     public TMP_InputField timeLimitField;
 
+    public TMP_Text fullTimer;
+    int stTimerCurrent;
+    int stTimerDefault = 10;
+    bool timerStarted = false;
+    public Button startButton;
+
     public GameObject openMenu;
     public GameObject creationMenu;
     public GameObject listMenu;
 
+    
+    public RoomInfo myRoomInfo;
+    public int myGamemode;
+
     public string roomName = "MyCoolRoom";
-    public int gamemode;
     public int maxPlayers = 4;
     public int timeLimit = 300;
 
@@ -46,9 +56,12 @@ public class LobbyManager : MonoBehaviour
         roomNameField.text = roomName;
         maxPlayerField.text = maxPlayers.ToString();
         timeLimitField.text = timeLimit.ToString();
+        stTimerCurrent = stTimerDefault;
+        fullTimer.text = "";
 
         if (MainMenuUI.instance.titleButtonClicked == true)
         {
+            PhotonNetwork.JoinLobby();
             listMenu.SetActive(true);
             creationMenu.SetActive(false);
             openMenu.SetActive(false);
@@ -64,7 +77,27 @@ public class LobbyManager : MonoBehaviour
     public void Update()
     {
         roomName = roomNameField.text;
-        gamemode = gamemodeDrop.value;
+        myGamemode = gamemodeDrop.value;
+
+        if (PhotonNetwork.InRoom == true && PhotonNetwork.IsMasterClient == true)
+        {
+            if (PhotonNetwork.CurrentRoom.PlayerCount == PhotonNetwork.CurrentRoom.MaxPlayers && timerStarted == false)
+            {
+                timerStarted = true;
+                stTimerCurrent = stTimerDefault;
+                fullTimer.text = stTimerDefault.ToString();
+                StartCoroutine(startTimer());
+            }
+        }
+
+        if (PhotonNetwork.IsMasterClient == true && timerStarted == false)
+        {
+            startButton.interactable = true;
+        }
+        else
+        {
+            startButton.interactable = false;
+        }
     }
 
     public void insertPlayer()
@@ -80,15 +113,15 @@ public class LobbyManager : MonoBehaviour
         }
     }
 
-    public void insertRoom(Room roomInfo, int gamemode)
+    public void insertRoom(RoomInfo roomData, int gamemode)
     {
         if (roomSlotPrefab)
         {
-            GameObject newSlot = PhotonNetwork.Instantiate(roomSlotPrefab.name, roomlist.transform.position, Quaternion.identity);
-            RoomInfoSlot slotInfo = newSlot.GetComponent<RoomInfoSlot>();
-            newSlot.transform.SetParent(roomlist);
-            slotInfo.infoSet(roomInfo.Name, new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f)));
-            slotInfo.roomExtras(gamemode, roomInfo.PlayerCount, roomInfo.MaxPlayers);
+            GameObject newSlot = Instantiate(roomSlotPrefab, roomlist.transform.position, Quaternion.identity);
+            RoomInfoSlot thisSlotData = newSlot.GetComponent<RoomInfoSlot>();
+            thisSlotData.infoSet(roomData.Name, new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f)));
+            thisSlotData.roomExtras(gamemode, roomData.PlayerCount, roomData.MaxPlayers);
+            //PhotonNetwork.Instantiate(roomSlotPrefab.name, roomlist.transform.position, Quaternion.identity);
             Debug.Log("Room Slot inserted");
         }
         else
@@ -96,6 +129,8 @@ public class LobbyManager : MonoBehaviour
             Debug.Log("roomSlotPrefab not set. [insertRoom][Start]");
         }
     }
+
+
 
     public void valChangeManual()
     {
@@ -169,7 +204,7 @@ public class LobbyManager : MonoBehaviour
     {
         if (PhotonManager.instance != null)
         {
-            PhotonManager.instance.CreateRoom(roomName, maxPlayers, timeLimit, gamemode);
+            PhotonManager.instance.CreateRoom(roomName, maxPlayers, timeLimit, myGamemode);
         }
         else
         {
@@ -177,11 +212,12 @@ public class LobbyManager : MonoBehaviour
         }
     }
 
-    public void joinRoom()
+    public void joinRoom(string room)
     {
         if (PhotonManager.instance != null)
         {
-            // join a specific room
+            PhotonNetwork.JoinRoom(room);
+            Debug.Log("GEEEG");
         }
         else
         {
@@ -214,5 +250,29 @@ public class LobbyManager : MonoBehaviour
     public void startGame() // start game
     {
         PhotonManager.instance.StartGame();
+    }
+
+    public IEnumerator startTimer()
+    {
+        yield return new WaitForSeconds(1f);
+        stTimerCurrent -= 1;
+        fullTimer.text = stTimerCurrent.ToString();
+        if (PhotonNetwork.CurrentRoom.PlayerCount == PhotonNetwork.CurrentRoom.MaxPlayers)
+        {
+            if (stTimerCurrent <= 0)
+            {
+                startGame();
+            }
+            else
+            {
+                StartCoroutine(startTimer());
+            }
+        }
+        else
+        {
+            timerStarted = false;
+            stTimerCurrent = stTimerDefault;
+            fullTimer.text = "";
+        }
     }
 }

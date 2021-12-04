@@ -4,13 +4,6 @@ Footstep Sounds
 Working chat
 Timer
 Join and Leave Messages
-______________
-
-issues to fix:
-pressing escape while chatting leads to lockup weirdness
-strafing momentum causes most shots to do no damage but still play a hitconfirm sound... was this a photon-related issue?
-
-Lobby (Give each scene a quit button)
 
 Title - Connects to master, allows the player to 
 
@@ -19,25 +12,33 @@ Enter a Room
 
 These cannot be done until the player's username is set.
 
- |
- V
 
-Lobby - Show all players in room. Auto start when room is full. Working chat.
+Lobby - Show a list of rooms.
+Create Room - Allows player to create a room to be joined in the lobby.
 
-Server List -> Room -> Game
-Create Room -> Room -> Game
-
+Room - Shows all players in room. Working chat. Auto start when room is full.
 In order for a game to start, the room must be full or the host must start it manually.
 
- |
- V
-
 In Game - The game uses all the info created in the "Create Room" section.
+
+
+
+show which player is the room owner
+______________
+
+issues to fix:
+all the characters are acting strangely. Jumping isn't visible to other players, and nametags are goin crazy.
+pressing escape while chatting leads to lockup weirdness
+strafing momentum causes most shots to do no damage but still play a hitconfirm sound... was this a photon-related issue?
+fix the owner symbol when the owner leaves
+allow other players in a lobby to view the countdown timer before a game starts
+have some rhyme or reason to the colors of rooms in the lobby
+
 
 Game -> Time runs out -> Room
 Game -> Win condition met -> Room
 
-The game returns to the room lobby with updated scores. Given that the room is still full, the game will start back up again after a 10 second wait.
+The game returns to the room with updated scores. Given that the room is still full, the game will start back up again after a 10 second wait.
 
 *
 

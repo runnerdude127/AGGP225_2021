@@ -59,6 +59,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         {
             PhotonNetwork.ConnectUsingSettings();
             PhotonNetwork.GameVersion = gameVersion;
+            
         }    
     }
 
@@ -128,12 +129,24 @@ public class PhotonManager : MonoBehaviourPunCallbacks
 
         LobbyManager.instance.openMenu.SetActive(true);
         LobbyManager.instance.creationMenu.SetActive(false);
-        LobbyManager.instance.insertRoom(PhotonNetwork.CurrentRoom, (int)myRoom.CustomRoomProperties[GAMEMODE]);
     }
+    public override void OnRoomListUpdate(List<RoomInfo> roomList)
+    {
+        foreach(Transform child in LobbyManager.instance.roomlist)
+        {
+            Destroy(child.gameObject);
+        }
+
+        foreach (RoomInfo roomData in roomList)
+        {
+            LobbyManager.instance.insertRoom(roomData, 1/*(int)roomData.CustomProperties[GAMEMODE]*/);
+        }
+    }
+
     public override void OnJoinedRoom()
     {        
         if (PhotonNetwork.IsMasterClient)
-        {   
+        {
             //PhotonNetwork.LoadLevel(gameplayLevel);
         }
         LobbyManager.instance.openMenu.SetActive(true);
@@ -166,6 +179,14 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     {
         Debug.Log("Connection failed. Reason: " + message + " [PhotonManager][OnJoinRandomFailed]");
         MainMenuUI.instance.UpdateLog("Connection failed. Reason: " + message);
+        //Debug.Log("Creating a failsafe room... [PhotonManager][OnCreatedRoom]");
+        //CreateRoom();
+    }
+
+    public override void OnJoinRoomFailed(short returnCode, string message)
+    {
+        Debug.Log("Connection failed. Reason: " + message + " [PhotonManager][OnJoinRoomFailed]");
+        //MainMenuUI.instance.UpdateLog("Connection failed. Reason: " + message);
         //Debug.Log("Creating a failsafe room... [PhotonManager][OnCreatedRoom]");
         //CreateRoom();
     }

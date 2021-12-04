@@ -8,9 +8,9 @@ public class PlayerGUI : MonoBehaviour
 {
     #region InRoom UI
     public bool paused = false;
-    public bool chatting = false;
     public GameObject pauseMenu;
-    public TMP_InputField chatBox;
+    public ChatboxUI chatBox;
+
     public TextMeshProUGUI timerText;
 
     public Image colorUI;
@@ -40,8 +40,6 @@ public class PlayerGUI : MonoBehaviour
         {
             instance = this;
         }
-
-        chatBox.interactable = false;
     }
 
     private void Start()
@@ -65,20 +63,6 @@ public class PlayerGUI : MonoBehaviour
         {
             PauseMenu();
         }
-
-        if (Input.GetKeyDown(KeyCode.T) && chatting == false)
-        {
-            chatBox.interactable = true;
-            chatBox.ActivateInputField();
-            ChatboxSelect();
-        }
-        
-
-        if (Input.GetKeyDown(KeyCode.Return) && chatting == false)
-        {
-            ChatroomManager.instance.submitMessage();
-            chatBox.interactable = false;
-        }
     }
 
     void inputStateUpdate()
@@ -88,7 +72,7 @@ public class PlayerGUI : MonoBehaviour
             playerMouseInput = false;
             playerKeyInput = false;
         }
-        else if (chatting == true)
+        else if (chatBox.chatting == true)
         {
             playerKeyInput = false; 
         }
@@ -123,16 +107,6 @@ public class PlayerGUI : MonoBehaviour
         {
             paused = false;
         }
-    }
-
-    public void ChatboxSelect()
-    {
-        chatting = true;
-    }
-
-    public void ChatboxDeselect()
-    {
-        chatting = false;
     }
 
     public void leaveGame()

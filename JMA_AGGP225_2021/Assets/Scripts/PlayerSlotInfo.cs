@@ -10,6 +10,12 @@ using Photon.Realtime;
 
 public class PlayerSlotInfo : InfoSlot
 {
+    bool ready = false;
+
+    public Sprite PlayerIcon;
+    public Sprite HostIcon;
+    public Sprite ReadyIcon;
+
     public override void Awake()
     {
         base.Awake();
@@ -18,12 +24,35 @@ public class PlayerSlotInfo : InfoSlot
 
         if (gameObject.GetPhotonView().IsMine)
         {
-            infoSet(PhotonManager.instance.myUsername, PhotonManager.instance.myColor);
+            gameObject.GetPhotonView().RPC("playerSlotUpdate", RpcTarget.AllBufferedViaServer, PhotonManager.instance.myUsername, PhotonNetwork.IsMasterClient, PhotonManager.instance.myColor.r, PhotonManager.instance.myColor.g, PhotonManager.instance.myColor.b);
         }
     }
 
     public override void infoSet(string name, Color bgColor)
     {
         base.infoSet(name, bgColor);
+    }
+
+    [PunRPC]
+    void playerSlotUpdate(string nameSet, bool isHost, float r, float g, float b)
+    {
+        slotBG.color = new Color(r, g, b);
+        slotName.text = nameSet;
+
+        if (ready == false)
+        {
+            if (isHost == true)
+            {
+                slotIcon.sprite = HostIcon;
+            }
+            else
+            {
+                slotIcon.sprite = PlayerIcon;
+            }
+        }
+        else
+        {
+            slotIcon.sprite = ReadyIcon;
+        }
     }
 }

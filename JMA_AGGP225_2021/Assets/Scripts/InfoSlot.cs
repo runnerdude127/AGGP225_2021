@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 public class InfoSlot : MonoBehaviour
 {
+    public Image slotIcon;
     public TMP_Text slotName;
     public Image slotBG; 
 
