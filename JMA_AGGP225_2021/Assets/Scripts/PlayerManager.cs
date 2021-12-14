@@ -262,7 +262,7 @@ public class PlayerManager : Character
             }
         }       
     }
-
+    
     [PunRPC]
     void makeShot(float r, float g, float b)
     {       
