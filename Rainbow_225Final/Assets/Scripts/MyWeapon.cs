@@ -8,70 +8,41 @@ using Photon.Realtime;
 
 public class MyWeapon : MonoBehaviour
 {
-    public static MyWeapon instance;
-    public GameObject weapon;
-    public GameObject weaponManager;
-
-    public bool isWeapon;
-    public bool facesMouse;
+    //public bool facesMouse;
     public Weapon currentWeapon;
 
     public bool cooldown;
+    public bool isWeapon;
 
-    SpriteRenderer spriteRend;
-    Animator anim;
+    public SpriteRenderer spriteRend;
+    public Animator anim;
+
     AudioSource source;
-
     public AudioClip shootSound;
 
     void Awake()
-    {
-        if (isWeapon)
-        {
-            instance = this;
-        }
-    }
-
-    void Start()
     {
         spriteRend = gameObject.GetComponent<SpriteRenderer>();
         anim = gameObject.GetComponent<Animator>();
         source = gameObject.GetComponent<AudioSource>();
     }
 
-    void Update()
+    IEnumerator ShootAnim(float delay)
     {
-        if (isWeapon)
-        {
-            WeaponManager getStats = weaponManager.GetComponent<WeaponManager>();
-            currentWeapon = getStats.GetWeapon();
-            spriteRend.sprite = currentWeapon.sprite;
-        }
+        yield return new WaitForSeconds(delay);
     }
 
-
-    public void Shoot(int player)
+    public IEnumerator Shoot(int player)
     {
-        Debug.Log("three");
         PhotonView playerMaker = PhotonView.Find(player);
-        PhotonView weaponView = gameObject.GetComponent<PhotonView>();
         GameObject maker = playerMaker.gameObject;
 
-        if (weaponView.IsMine)
+        cooldown = true;
+        StartCoroutine(ShootAnim(currentWeapon.delay));
+
+        if (currentWeapon.burst > 1)
         {
-            if (currentWeapon.burst > 1)
-            {
-                for (int x = 0; x < currentWeapon.burst; x++)
-                {
-                    GameObject shot = Instantiate(currentWeapon.bulletType, transform.position, transform.parent.rotation * Quaternion.Euler(0, 0, Random.Range(-currentWeapon.accuracy, currentWeapon.accuracy)));
-                    Bullet thisShot = shot.GetComponent<Bullet>();
-                    if (maker)
-                    {
-                        thisShot.creator = maker;
-                    }
-                }
-            }
-            else
+            for (int x = 0; x < currentWeapon.burst; x++)
             {
                 GameObject shot = Instantiate(currentWeapon.bulletType, transform.position, transform.parent.rotation * Quaternion.Euler(0, 0, Random.Range(-currentWeapon.accuracy, currentWeapon.accuracy)));
                 Bullet thisShot = shot.GetComponent<Bullet>();
@@ -80,7 +51,20 @@ public class MyWeapon : MonoBehaviour
                     thisShot.creator = maker;
                 }
             }
-            source.PlayOneShot(currentWeapon.shootSound);
-        } 
+        }
+        else
+        {
+            GameObject shot = Instantiate(currentWeapon.bulletType, transform.position, transform.parent.rotation * Quaternion.Euler(0, 0, Random.Range(-currentWeapon.accuracy, currentWeapon.accuracy)));
+            Bullet thisShot = shot.GetComponent<Bullet>();
+            if (maker)
+            {
+                thisShot.creator = maker;
+            }
+        }
+        source.PlayOneShot(currentWeapon.shootSound);
+
+        yield return new WaitForSeconds(currentWeapon.delay);
+        cooldown = false;
+        yield return new WaitForSeconds(0.05f);
     }
 }

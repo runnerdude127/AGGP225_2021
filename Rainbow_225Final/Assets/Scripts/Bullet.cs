@@ -63,9 +63,11 @@ public class Bullet : MonoBehaviour
                     Player ply = collision.gameObject.GetComponent<Player>();
                     if (ply)
                     {
-                        //Debug.Log("player found");
-                        Vector3 knockDir = transform.position - collision.gameObject.transform.position;
-                        ply.gameObject.GetPhotonView().RPC("playerDamage", RpcTarget.All, knockDir, damage, creator.GetPhotonView().ViewID);
+                        if (ply.pv.IsMine)
+                        {
+                            Vector3 knockDir = transform.position - collision.gameObject.transform.position;
+                            ply.gameObject.GetPhotonView().RPC("playerDamage", RpcTarget.All, knockDir, damage, creator.GetPhotonView().ViewID);
+                        }
                     }
                     else
                     {
@@ -105,14 +107,15 @@ public class Bullet : MonoBehaviour
                 Actor act = collision.gameObject.GetComponent<Actor>();
                 if (act)
                 {
-                    //Debug.Log("actor found");
                     source.PlayOneShot(enemyHit);
                     Player ply = collision.gameObject.GetComponent<Player>();
                     if (ply)
                     {
-                        //Debug.Log("player found");
-                        Vector3 knockDir = transform.position - collision.gameObject.transform.position;
-                        ply.gameObject.GetPhotonView().RPC("playerDamage", RpcTarget.All, knockDir, damage, creator.GetPhotonView().ViewID);
+                        if (ply.pv.IsMine)
+                        {
+                            Vector3 knockDir = transform.position - collision.gameObject.transform.position;
+                            ply.gameObject.GetPhotonView().RPC("playerDamage", RpcTarget.All, knockDir, damage, creator.GetPhotonView().ViewID);
+                        }
                     }
                     else
                     {

@@ -15,11 +15,15 @@ public class PhotonManager : MonoBehaviourPunCallbacks
 
     public string myUsername = "Default";
     //public CharacterClass myClass;
-    public int classID;
+    
     public bool canConnect;
 
-    RoomOptions myRoom;
     public List<CharacterClass> classList;
+    public int classID = 0;
+    public List<Weapon> weaponList;
+    public int weaponID = 0;
+
+    RoomOptions myRoom;
     string gameplayLevel = "InGame";
     public int timer;
     int gm;
@@ -200,5 +204,10 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     public int getPlayerClass()
     {
         return classID;
+    }
+
+    public Weapon GetWeapon()
+    {
+        return weaponList[weaponID];
     }
 }

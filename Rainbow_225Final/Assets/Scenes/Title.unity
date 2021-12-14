@@ -268,7 +268,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   myUsername: 
-  classID: 0
   canConnect: 0
   classList:
   - name: Vermili
@@ -327,6 +326,39 @@ MonoBehaviour:
     mystery: 0
     sprite: {fileID: -8923911374754931897, guid: 65a40d06d07ae3a44a083e9b61ac7989, type: 3}
     animations: {fileID: 9100000, guid: 8c592919de4f059458b5fd543dd910bb, type: 2}
+  classID: 0
+  weaponList:
+  - name: Duster
+    bulletType: {fileID: 3780121062742525804, guid: 61b45ce31cd3e094a8355b98d0d7dab3, type: 3}
+    auto: 0
+    burst: 1
+    delay: 0.02
+    recoil: 0
+    accuracy: 0.1
+    sprite: {fileID: 21300000, guid: fd6b7cbcb3420dc45bad20278c6dc9fd, type: 3}
+    loadSound: {fileID: 8300000, guid: 03da3761b28ba2d4fb919977b31c45e2, type: 3}
+    shootSound: {fileID: 8300000, guid: 474ea6af37c5e5040a322a99fc3e1c82, type: 3}
+  - name: PyuPyu
+    bulletType: {fileID: 525063428801916227, guid: 8607257ec2f140948bc63179f00d9701, type: 3}
+    auto: 1
+    burst: 1
+    delay: 0.1
+    recoil: 0
+    accuracy: 0.2
+    sprite: {fileID: -4812194569210208550, guid: bba467b9b9be08646a2ada9e297a8164, type: 3}
+    loadSound: {fileID: 8300000, guid: 03da3761b28ba2d4fb919977b31c45e2, type: 3}
+    shootSound: {fileID: 8300000, guid: bb367461f677d2d42b86937bceb6c2c7, type: 3}
+  - name: Uka
+    bulletType: {fileID: 4196298661244572297, guid: 4b4493d31194d8c46abd815b1815f3d8, type: 3}
+    auto: 1
+    burst: 5
+    delay: 0.1
+    recoil: 0
+    accuracy: 5
+    sprite: {fileID: 4444071716422392739, guid: ede272affe636f94cbcb0491c3b16502, type: 3}
+    loadSound: {fileID: 8300000, guid: 03da3761b28ba2d4fb919977b31c45e2, type: 3}
+    shootSound: {fileID: 8300000, guid: 029534fb6a713c843883d16b85e0bec0, type: 3}
+  weaponID: 0
   timer: 0
 --- !u!4 &365812120
 Transform:
