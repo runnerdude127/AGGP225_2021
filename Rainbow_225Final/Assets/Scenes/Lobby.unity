@@ -2713,7 +2713,7 @@ MonoBehaviour:
   maxPlayerField: {fileID: 1733131502}
   timeLimitField: {fileID: 599356430}
   myGamemode: 0
-  roomName: MyCoolRoom
+  roomName: Default
   maxPlayers: 4
   timeLimit: 300
 --- !u!1 &704308223

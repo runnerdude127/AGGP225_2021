@@ -53,10 +53,7 @@ public class Player : ActiveActor
         if (gameObject.GetPhotonView().IsMine)
         {
             PlayerGUI.instance.portraitIcon.sprite = myClass.bigIcon;
-            currentWepID = PhotonManager.instance.weaponID;
-            myWeapon.currentWeapon = PhotonManager.instance.weaponList[currentWepID];
-            actTwoAuto = myWeapon.currentWeapon.auto;
-            myWeapon.spriteRend.sprite = myWeapon.currentWeapon.sprite;
+            pv.RPC("setWeapon", RpcTarget.AllBuffered);
 
             healthBar = PlayerGUI.instance.thisPlayerHealth;
             specialBar = PlayerGUI.instance.thisPlayerCharge;
@@ -189,6 +186,15 @@ public class Player : ActiveActor
     }
 
     #endregion
+
+    [PunRPC]
+    public void setWeapon()
+    {
+        currentWepID = PhotonManager.instance.weaponID;
+        myWeapon.currentWeapon = PhotonManager.instance.weaponList[currentWepID];
+        actTwoAuto = myWeapon.currentWeapon.auto;
+        myWeapon.spriteRend.sprite = myWeapon.currentWeapon.sprite;
+    }
 
     [PunRPC]
     public void nextWeapon()

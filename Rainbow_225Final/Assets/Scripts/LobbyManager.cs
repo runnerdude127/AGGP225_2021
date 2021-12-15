@@ -59,7 +59,16 @@ public class LobbyManager : MonoBehaviour
     {
         PhotonNetwork.JoinLobby();
 
-        roomNameField.text = roomName;
+        string name = PhotonManager.instance.myUsername;
+        if (name != null)
+        {
+            roomNameField.text = name + "'s Room";
+        }
+        else
+        {
+            roomNameField.text = roomName;
+        }
+        
         maxPlayerField.text = maxPlayers.ToString();
         timeLimitField.text = timeLimit.ToString();
         
