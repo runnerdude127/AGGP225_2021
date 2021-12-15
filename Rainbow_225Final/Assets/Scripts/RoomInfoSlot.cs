@@ -12,9 +12,9 @@ public class RoomInfoSlot : InfoSlot
 {
     public TMP_Text slotDetail;
 
-    public Sprite CBIcon;
-    public Sprite HSIcon;
-    public Sprite HCIcon;
+    public Sprite deathmatchIcon;
+    public Sprite teamdeathIcon;
+    public Sprite juggernautIcon;
 
     int gamemode;
 
@@ -33,7 +33,8 @@ public class RoomInfoSlot : InfoSlot
 
     public void roomClick()
     {
-        LobbyManager.instance.joinRoom(slotName.text);
+        LobbyManager.instance.roomSelected = gameObject.GetComponent<RoomInfoSlot>();
+        //LobbyManager.instance.joinRoom(slotName.text);
     }
 
     public override void infoSet(string name)
@@ -46,15 +47,15 @@ public class RoomInfoSlot : InfoSlot
         slotDetail.text = players.ToString() + "/" + roomMax.ToString();
         if (gamemodeInfo == 0)
         {
-            slotIcon.sprite = CBIcon;
+            slotIcon.sprite = deathmatchIcon;
         }
         else if (gamemodeInfo == 1)
         {
-            slotIcon.sprite = HSIcon;
+            slotIcon.sprite = teamdeathIcon;
         }
         else if (gamemodeInfo == 2)
         {
-            slotIcon.sprite = HCIcon;
+            slotIcon.sprite = juggernautIcon;
         }
     }
 }

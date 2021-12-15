@@ -12,8 +12,10 @@ public class CharacterClass
     public int mystery;
     public Sprite sprite;
     public RuntimeAnimatorController animations;
+    public Sprite smallIcon;
+    public Sprite bigIcon;
 
-    public CharacterClass(string newName, int newHP, int newSpeed, int newJump, int newMystery, Sprite newSprite, RuntimeAnimatorController newAnims)
+    public CharacterClass(string newName, int newHP, int newSpeed, int newJump, int newMystery, Sprite newSprite, RuntimeAnimatorController newAnims, Sprite newSmall, Sprite newBig)
     {
         name = newName;
         hp = newHP;
@@ -21,6 +23,8 @@ public class CharacterClass
         jumpHeight = newJump;
         sprite = newSprite;
         animations = newAnims;
+        smallIcon = newSmall;
+        bigIcon = newBig;
     }
 }
 

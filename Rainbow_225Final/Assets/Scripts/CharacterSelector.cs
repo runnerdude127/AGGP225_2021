@@ -19,6 +19,7 @@ public class CharacterSelector : MonoBehaviour
     private void Awake()
     {
         classList = PhotonManager.instance.classList;
+        currentClass = PhotonManager.instance.classID;
     }
 
     private void Start()

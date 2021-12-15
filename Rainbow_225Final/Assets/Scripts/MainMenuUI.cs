@@ -5,6 +5,9 @@ using TMPro;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
+using Photon.Pun;
+using Photon.Realtime;
+
 public class MainMenuUI : MonoBehaviour
 {
     #region Main Menu UI
@@ -53,7 +56,14 @@ public class MainMenuUI : MonoBehaviour
     #region UI Updates
     private void Update()
     {
-
+        if (PhotonNetwork.IsConnected && usernameField.text != "")
+        {
+            playButton.interactable = true;
+        }
+        else
+        {
+            playButton.interactable = false;
+        }
     }
 
     public void UpdateLog(string _log)

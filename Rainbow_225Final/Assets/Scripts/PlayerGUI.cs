@@ -16,6 +16,7 @@ public class PlayerGUI : MonoBehaviour
 
     public Meter thisPlayerHealth;
     public Meter thisPlayerCharge;
+    public Image portraitIcon;
 
     public static PlayerGUI instance { get; private set; } // SINGLETON INSTANCE
 
@@ -88,7 +89,12 @@ public class PlayerGUI : MonoBehaviour
 
     public void leaveGame()
     {
-        ChatroomManager.instance.consoleMessage("LeaveGameMessage");
+        //ChatroomManager.instance.consoleMessage("LeaveGameMessage");
         PhotonManager.instance.LeaveRoom();
+    }
+
+    public void quitGame()
+    {
+        Application.Quit();
     }
 }

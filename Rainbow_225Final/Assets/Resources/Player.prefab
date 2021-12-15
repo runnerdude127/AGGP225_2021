@@ -421,7 +421,7 @@ MonoBehaviour:
   isDamageable: 1
   hasHealth: 1
   respawns: 1
-  invulnTime: 0.001
+  invulnTime: 0.1
   isEnemy: 0
   damageShake: 1
   doKnockback: 1
@@ -438,6 +438,8 @@ MonoBehaviour:
   basePitch: 0
   damageSound: {fileID: 8300000, guid: 525c05e1c9d3272419e65c52730306c6, type: 3}
   damageNumber: {fileID: 2456811001237180146, guid: ec862549f8eabc54789eb4602c709e4b, type: 3}
+  damageRacked: 0
+  checking: 0
   controllable: 1
   actOneAuto: 0
   actTwoAuto: 0
@@ -451,6 +453,8 @@ MonoBehaviour:
     mystery: 0
     sprite: {fileID: 0}
     animations: {fileID: 0}
+    smallIcon: {fileID: 0}
+    bigIcon: {fileID: 0}
   hand: {fileID: 3480114102183868777}
   myWeapon: {fileID: 4142125328522892860}
   grounded: 0
@@ -481,7 +485,6 @@ MonoBehaviour:
   - {fileID: 7217218698252443736}
   - {fileID: -8301300926588522693}
   - {fileID: 6124125171082682045}
-  - {fileID: 124991118349140956}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0

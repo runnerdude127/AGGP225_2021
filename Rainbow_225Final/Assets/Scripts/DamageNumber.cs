@@ -11,10 +11,18 @@ public class DamageNumber : MonoBehaviour
     public TMP_Text myText;
 
     Rigidbody2D rb;
+    AudioSource source;
+    public AudioClip sound;
+
+    private void Awake()
+    {
+        source = gameObject.GetComponent<AudioSource>();
+        rb = gameObject.GetComponent<Rigidbody2D>();
+    }
 
     void Start()
     {
-        rb = gameObject.GetComponent<Rigidbody2D>();
+        source.PlayOneShot(sound);
         rb.AddForce(new Vector2((Random.Range(-1f, 1f) * force), force), ForceMode2D.Impulse);
         Destroy(gameObject, lifetime);
     }

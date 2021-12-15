@@ -277,6 +277,8 @@ MonoBehaviour:
     mystery: 0
     sprite: {fileID: 6286595657586805340, guid: a5d73518489bdac49af1ce0de17df530, type: 3}
     animations: {fileID: 9100000, guid: 8cb8fdd6885f9c449bd5bab6f8865e79, type: 2}
+    smallIcon: {fileID: 4712819070781537712, guid: 95e9ebb772862b5488028a99de9fd535, type: 3}
+    bigIcon: {fileID: 699703873648253923, guid: 8ec51c4771ae9f64abf11aa66b1c9b2c, type: 3}
   - name: Ambers
     hp: 3
     speed: 10
@@ -284,6 +286,8 @@ MonoBehaviour:
     mystery: 0
     sprite: {fileID: 4121880872312635667, guid: ba3b2736c8bf7a9408bcd241847de811, type: 3}
     animations: {fileID: 9100000, guid: 616a8a251c971254e8734c83ed9ccad3, type: 2}
+    smallIcon: {fileID: -5726507272945555552, guid: 95e9ebb772862b5488028a99de9fd535, type: 3}
+    bigIcon: {fileID: 2434629766918126224, guid: 8ec51c4771ae9f64abf11aa66b1c9b2c, type: 3}
   - name: Canary
     hp: 5
     speed: 3
@@ -291,6 +295,8 @@ MonoBehaviour:
     mystery: 0
     sprite: {fileID: 8499740148186698395, guid: 725cf83aa815e154cbf0a1d8abdc3acc, type: 3}
     animations: {fileID: 9100000, guid: 2a88d6b1eb96e8146bc764727e7d2882, type: 2}
+    smallIcon: {fileID: 1375065177354957178, guid: 95e9ebb772862b5488028a99de9fd535, type: 3}
+    bigIcon: {fileID: 8558633213039616950, guid: 8ec51c4771ae9f64abf11aa66b1c9b2c, type: 3}
   - name: Miretruese
     hp: 8
     speed: 3
@@ -298,6 +304,8 @@ MonoBehaviour:
     mystery: 0
     sprite: {fileID: -2712454104627450637, guid: e856c2a13d66ee24e8f3255a70e9b8e7, type: 3}
     animations: {fileID: 9100000, guid: 911fa8bd7be7e8c4190ac1c26a55ce90, type: 2}
+    smallIcon: {fileID: -4496618043832679533, guid: 95e9ebb772862b5488028a99de9fd535, type: 3}
+    bigIcon: {fileID: -7737748710114358818, guid: 8ec51c4771ae9f64abf11aa66b1c9b2c, type: 3}
   - name: Seenobi
     hp: 5
     speed: 6
@@ -305,6 +313,8 @@ MonoBehaviour:
     mystery: 0
     sprite: {fileID: -4987337320017983735, guid: ac9c32ba25b242d428f8b762148af252, type: 3}
     animations: {fileID: 9100000, guid: 7a760f60494815b4299bca157fd16df5, type: 2}
+    smallIcon: {fileID: -575671543089993596, guid: 95e9ebb772862b5488028a99de9fd535, type: 3}
+    bigIcon: {fileID: 8232878538186372548, guid: 8ec51c4771ae9f64abf11aa66b1c9b2c, type: 3}
   - name: Aquack
     hp: 9
     speed: 2
@@ -312,6 +322,8 @@ MonoBehaviour:
     mystery: 0
     sprite: {fileID: -4003223316803723154, guid: bba467b9b9be08646a2ada9e297a8164, type: 3}
     animations: {fileID: 9100000, guid: e4db7e8076be3c04582cde4e4b858837, type: 2}
+    smallIcon: {fileID: -7967203457212056302, guid: 95e9ebb772862b5488028a99de9fd535, type: 3}
+    bigIcon: {fileID: 6504610415572811104, guid: 8ec51c4771ae9f64abf11aa66b1c9b2c, type: 3}
   - name: Zulique
     hp: 6
     speed: 2
@@ -319,6 +331,8 @@ MonoBehaviour:
     mystery: 0
     sprite: {fileID: -6429493399158520243, guid: a2e7ba12e326dd24794c0688677b9cda, type: 3}
     animations: {fileID: 9100000, guid: f0d897670e8067a4796ee5e120388668, type: 2}
+    smallIcon: {fileID: -2226658602370750308, guid: 95e9ebb772862b5488028a99de9fd535, type: 3}
+    bigIcon: {fileID: -4148219816195209633, guid: 8ec51c4771ae9f64abf11aa66b1c9b2c, type: 3}
   - name: Maunk
     hp: 5
     speed: 5
@@ -326,6 +340,8 @@ MonoBehaviour:
     mystery: 0
     sprite: {fileID: -8923911374754931897, guid: 65a40d06d07ae3a44a083e9b61ac7989, type: 3}
     animations: {fileID: 9100000, guid: 8c592919de4f059458b5fd543dd910bb, type: 2}
+    smallIcon: {fileID: -2406636827378948754, guid: 95e9ebb772862b5488028a99de9fd535, type: 3}
+    bigIcon: {fileID: -7455959467572184964, guid: 8ec51c4771ae9f64abf11aa66b1c9b2c, type: 3}
   classID: 0
   weaponList:
   - name: Duster
@@ -354,7 +370,7 @@ MonoBehaviour:
     burst: 5
     delay: 0.1
     recoil: 0
-    accuracy: 5
+    accuracy: 25
     sprite: {fileID: 4444071716422392739, guid: ede272affe636f94cbcb0491c3b16502, type: 3}
     loadSound: {fileID: 8300000, guid: 03da3761b28ba2d4fb919977b31c45e2, type: 3}
     shootSound: {fileID: 8300000, guid: 029534fb6a713c843883d16b85e0bec0, type: 3}
@@ -1626,7 +1642,7 @@ MonoBehaviour:
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_DisabledColor: {r: 0.27450982, g: 0.2627451, b: 0.2392157, a: 1}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -2785,14 +2801,14 @@ MonoBehaviour:
   m_VerticalScrollbarEventHandler: {fileID: 0}
   m_LayoutGroup: {fileID: 0}
   m_ScrollSensitivity: 1
-  m_ContentType: 0
+  m_ContentType: 4
   m_InputType: 0
   m_AsteriskChar: 42
-  m_KeyboardType: 0
+  m_KeyboardType: 1
   m_LineType: 0
   m_HideMobileInput: 0
   m_HideSoftKeyboard: 0
-  m_CharacterValidation: 0
+  m_CharacterValidation: 4
   m_RegexValue: 
   m_GlobalPointSize: 14
   m_CharacterLimit: 20
@@ -2822,7 +2838,7 @@ MonoBehaviour:
       m_Calls: []
   m_CaretColor: {r: 0.27450982, g: 0.2627451, b: 0.2392157, a: 1}
   m_CustomCaretColor: 1
-  m_SelectionColor: {r: 0.65882355, g: 0.80784315, b: 1, a: 0.7529412}
+  m_SelectionColor: {r: 0.2627451, g: 0.37254903, b: 0.92941177, a: 1}
   m_Text: 
   m_CaretBlinkRate: 3
   m_CaretWidth: 4

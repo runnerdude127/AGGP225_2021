@@ -56,7 +56,7 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     public override void OnDisconnected(DisconnectCause cause)
     {
-        ChatroomManager.instance.consoleMessage("LeaveGameMessage");
+        //ChatroomManager.instance.consoleMessage("LeaveGameMessage");
     }
 
     public GameObject getSpawn()

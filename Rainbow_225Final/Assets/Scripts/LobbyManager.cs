@@ -22,7 +22,7 @@ public class LobbyManager : MonoBehaviour
 
     public TMP_Text roomSelectedName;
     public TMP_Text roomSelectedGamemode;
-    RoomInfoSlot roomSelected;
+    public RoomInfoSlot roomSelected;
     public Button enterButton;
     #endregion
 
@@ -57,6 +57,8 @@ public class LobbyManager : MonoBehaviour
 
     public void Start()
     {
+        PhotonNetwork.JoinLobby();
+
         roomNameField.text = roomName;
         maxPlayerField.text = maxPlayers.ToString();
         timeLimitField.text = timeLimit.ToString();
@@ -84,7 +86,7 @@ public class LobbyManager : MonoBehaviour
         if (roomSelected)
         {
             enterButton.interactable = true;
-            roomSelectedName.text = roomSelected.name;
+            roomSelectedName.text = roomSelected.slotName.text.ToString();
             roomSelectedGamemode.text = "temp";
         }
         else
@@ -100,7 +102,7 @@ public class LobbyManager : MonoBehaviour
         if (playerSlotPrefab)
         {
             //PhotonNetwork.Instantiate(playerSlotPrefab.name, playerlist.transform.position, Quaternion.identity);
-            Debug.Log("Player Slot inserted");
+            //Debug.Log("Player Slot inserted");
         }
         else
         {
@@ -117,7 +119,7 @@ public class LobbyManager : MonoBehaviour
             thisSlotData.infoSet(roomData.Name);
             thisSlotData.roomExtras(gamemode, roomData.PlayerCount, roomData.MaxPlayers);
             //PhotonNetwork.Instantiate(roomSlotPrefab.name, roomlist.transform.position, Quaternion.identity);
-            Debug.Log("Room Slot inserted");
+            //Debug.Log("Room Slot inserted");
         }
         else
         {
@@ -129,8 +131,17 @@ public class LobbyManager : MonoBehaviour
 
     public void valChangeManual()
     {
-        int newPlayers = int.Parse(maxPlayerField.text);
-        int newTime = int.Parse(timeLimitField.text);
+        int newPlayers;
+        int newTime;
+        
+        if (timeLimitField.text == "")
+        {
+            timeLimitField.text = timeLimit.ToString();
+        }
+
+        int.TryParse(maxPlayerField.text, out newPlayers);
+        int.TryParse(timeLimitField.text, out newTime);
+        
 
         if (newPlayers < 2)
         {
@@ -207,12 +218,11 @@ public class LobbyManager : MonoBehaviour
         }
     }
 
-    public void joinRoom(string room)
+    public void joinRoom()
     {
         if (PhotonManager.instance != null)
         {
-            PhotonNetwork.JoinRoom(room);
-            Debug.Log("GEEEG");
+            PhotonNetwork.JoinRoom(roomSelected.slotName.text.ToString());
         }
         else
         {

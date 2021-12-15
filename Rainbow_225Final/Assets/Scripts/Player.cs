@@ -52,6 +52,7 @@ public class Player : ActiveActor
 
         if (gameObject.GetPhotonView().IsMine)
         {
+            PlayerGUI.instance.portraitIcon.sprite = myClass.bigIcon;
             currentWepID = PhotonManager.instance.weaponID;
             myWeapon.currentWeapon = PhotonManager.instance.weaponList[currentWepID];
             actTwoAuto = myWeapon.currentWeapon.auto;
@@ -95,6 +96,10 @@ public class Player : ActiveActor
         if (pv.IsMine)
         {
             base.Update();
+        }
+        if (damageRacked > 0 && checking == false)
+        {
+            StartCoroutine(damageNumberCheck());
         }
     }
 

@@ -40,6 +40,8 @@ public class Actor : MonoBehaviour
 
     public AudioClip damageSound;
     public GameObject damageNumber;
+    public int damageRacked = 0;
+    public bool checking = false;
 
     public virtual void Awake()
     {
@@ -58,6 +60,14 @@ public class Actor : MonoBehaviour
         basePitch = source.pitch;
 
         currentHealth = health;
+    }
+
+    void Update()
+    {
+        if (damageRacked > 0 && checking == false)
+        {
+            StartCoroutine(damageNumberCheck());
+        }
     }
 
     /*private void OnTriggerEnter2D(Collider2D collision)
@@ -79,6 +89,8 @@ public class Actor : MonoBehaviour
 
     public virtual IEnumerator Hurt(Vector3 knockDir, int damage, int attacker)
     {
+        invulnurable = true;
+        damageRacked += damage;
         string deathCause;
         PhotonView attackView = PhotonView.Find(attacker);
 
@@ -91,12 +103,7 @@ public class Actor : MonoBehaviour
         {
             deathCause = "natural causes";
         }
-        
-        GameObject number = Instantiate(damageNumber, transform.position + new Vector3(Random.Range(-.2f, .2f), Random.Range(-.2f, .2f), 0), Quaternion.identity);
-        DamageNumber damNum = number.GetComponent<DamageNumber>();
-        damNum.damageAmount = damage;
 
-        invulnurable = true;
         source.PlayOneShot(damageSound);
         StartCoroutine(InvulnFlash());
         //Debug.Log(gameObject.name + " has been hurt for " + damage + " damage!");
@@ -124,35 +131,69 @@ public class Actor : MonoBehaviour
         invulnurable = false;
     }
 
+    public IEnumerator damageNumberCheck()
+    {
+        if (damageRacked > 0)
+        {
+            checking = true;
+            if (invulnurable == true || blinkCooldown == true)
+            {
+                
+            }
+            else
+            {
+                GameObject number = Instantiate(damageNumber, transform.position + new Vector3(Random.Range(-.2f, .2f), Random.Range(-.2f, .2f), 0), Quaternion.identity);
+                DamageNumber damNum = number.GetComponent<DamageNumber>();
+                damNum.damageAmount = damageRacked;
+                damageRacked = 0;
+                yield return new WaitForSeconds(invulnTime);
+            }
+            yield return new WaitForSeconds(invulnTime * 2);
+            checking = false;
+        }
+    }
+
+
     public IEnumerator actorDies(string cause)
     {
-        isDead = true;
-
-        spriteRend.enabled = false;
-        col.enabled = false;
-        rb.constraints = RigidbodyConstraints2D.None;
-
-        Instantiate(deathEffect, gameObject.transform.position, Quaternion.identity);
-        rb.AddForce(new Vector3((Random.Range(-1f, 1f) * 10), (Random.Range(-1f, 1f) * 10), (Random.Range(-1f, 1f) * 10)), ForceMode2D.Impulse);
-        Debug.Log(this.gameObject.name + " was killed by " + cause);
-
-        yield return new WaitForSeconds(2f);
-        if (respawns)
+        if (damageRacked > 0)
         {
+            GameObject number = Instantiate(damageNumber, transform.position + new Vector3(Random.Range(-.2f, .2f), Random.Range(-.2f, .2f), 0), Quaternion.identity);
+            DamageNumber damNum = number.GetComponent<DamageNumber>();
+            damNum.damageAmount = damageRacked;
+            damageRacked = 0;
+        } 
+        if (isDead == false)
+        {
+            isDead = true;
+
+            spriteRend.enabled = false;
+            col.enabled = false;
+            rb.constraints = RigidbodyConstraints2D.None;
             rb.velocity = new Vector2(0, 0);
-            transform.position = getSpawnPoint();
-            currentHealth = health;
 
-            spriteRend.enabled = true;
-            col.enabled = true;
-            rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+            Instantiate(deathEffect, gameObject.transform.position, Quaternion.identity);
+            rb.AddForce(new Vector3((Random.Range(-1f, 1f) * 10), (Random.Range(-1f, 1f) * 10), (Random.Range(-1f, 1f) * 10)), ForceMode2D.Impulse);
+            Debug.Log(this.gameObject.name + " was killed by " + cause);
 
-            isDead = false;
-        }
-        else
-        {
-            rb.isKinematic = true;
-        }
+            yield return new WaitForSeconds(2f);
+            if (respawns)
+            {
+                rb.velocity = new Vector2(0, 0);
+                transform.position = getSpawnPoint();
+                currentHealth = health;
+
+                spriteRend.enabled = true;
+                col.enabled = true;
+                rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+
+                isDead = false;
+            }
+            else
+            {
+                rb.isKinematic = true;
+            }
+        } 
     }
 
     public virtual Vector2 getSpawnPoint()

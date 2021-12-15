@@ -28,6 +28,8 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     public int timer;
     int gm;
 
+    List<RoomInfo> roomsAware;
+
     public const string GAMEMODE = "GM";
     //public const string TIMELIMIT = "TL";
 
@@ -45,6 +47,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         }
 
         PhotonNetwork.AutomaticallySyncScene = true;
+        roomsAware = new List<RoomInfo>();
     }
 
     void Start()
@@ -86,7 +89,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks
 
         Debug.Log("Creating room... [PhotonManager][CreateRoom]");
         MainMenuUI.instance.UpdateLog("Creating room...");
-        PhotonNetwork.CreateRoom(roomName, myRoom);
+        PhotonNetwork.CreateRoom(roomName, myRoom, null);
     }
     public void JoinRandomRoom()
     {
@@ -99,20 +102,8 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         Debug.Log("Leaving... [PhotonManager][LeaveRoom]");
         MainMenuUI.instance.UpdateLog("Leaving...");
 
-        /*if (CameraManagaer.instance)
-        {
-            CameraManagaer.instance.isFollowing = false;
-            UnityEngine.Cursor.lockState = CursorLockMode.None;
-            UnityEngine.Cursor.visible = true;
-        }*/
-        
         PhotonNetwork.LeaveRoom();
     }
-
-    /*public void GetRoomSize(string name)
-    {
-        PhotonNetwork.
-    }*/
 
     public void StartGame()
     {
@@ -133,17 +124,52 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         //LobbyManager.instance.openMenu.SetActive(true);
         //LobbyManager.instance.creationMenu.SetActive(false);
     }
+
     public override void OnRoomListUpdate(List<RoomInfo> roomList)
     {
-        foreach(Transform child in LobbyManager.instance.roomlist)
+        UpdateCachedRoomList(roomList);
+    }
+
+    void UpdateCachedRoomList(List<RoomInfo> roomList)
+    {
+        foreach (RoomInfo roomData in roomList)
+        {
+            if (roomData.IsVisible && roomData.IsOpen && !roomData.RemovedFromList)
+            {
+                if (roomsAware.Contains(roomData))
+                {
+                    int slotnum = roomsAware.IndexOf(roomData);
+                    roomsAware.Remove(roomData);
+                    roomsAware.Insert(slotnum, roomData);
+                }
+                else
+                {
+                    roomsAware.Insert(roomsAware.Count, roomData);
+                } 
+            }
+            else
+            {
+                if (roomsAware.Contains(roomData))
+                {
+                    roomsAware.Remove(roomData);
+                }
+            }
+        }
+
+        Debug.Log("Refreshing...");
+        foreach (Transform child in LobbyManager.instance.roomlist)
         {
             Destroy(child.gameObject);
         }
 
-        foreach (RoomInfo roomData in roomList)
+        Debug.Log("Rooms: " + roomsAware.Count);
+        if (roomsAware.Count > 0)
         {
-            LobbyManager.instance.insertRoom(roomData, 1/*(int)roomData.CustomProperties[GAMEMODE]*/);
-        }
+            foreach (RoomInfo roomData in roomsAware)
+            {
+                LobbyManager.instance.insertRoom(roomData, 1/*(int)roomData.CustomProperties[GAMEMODE]*/);
+            }
+        } 
     }
 
     public override void OnJoinedRoom()
@@ -152,8 +178,6 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         {
             //PhotonNetwork.LoadLevel(gameplayLevel);
         }
-        //LobbyManager.instance.openMenu.SetActive(true);
-        //LobbyManager.instance.listMenu.SetActive(false);
         LobbyManager.instance.insertPlayer();
         Debug.Log("Connected to Room '" + PhotonNetwork.CurrentRoom.Name + "'. [PhotonManager][OnCreatedRoom]");
         MainMenuUI.instance.UpdateLog("Connected to Room '" + PhotonNetwork.CurrentRoom.Name + "'.");
@@ -162,7 +186,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     {
         Debug.Log("Left Room. [PhotonManager][OnLeftRoom]");
         MainMenuUI.instance.UpdateLog("Left the room.");
-        //SceneManager.LoadScene("Title");
+        SceneManager.LoadScene("Title");
     }
     #endregion
 

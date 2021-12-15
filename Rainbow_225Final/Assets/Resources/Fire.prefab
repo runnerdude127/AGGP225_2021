@@ -101,7 +101,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   equip: {fileID: 0}
   destroyed: 0
-  speed: 8
+  speed: 10
   damage: 2
   lifetime: 0.5
   anim: {fileID: 0}
