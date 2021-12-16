@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 public class CharacterSelector : MonoBehaviour
 {
@@ -9,7 +10,7 @@ public class CharacterSelector : MonoBehaviour
     public int currentClass;
     public GameObject classDisplayChar;
 
-    SpriteRenderer classimg;
+    Image classimg;
     public TMP_Text NAME;
     public TMP_Text HP;
     public TMP_Text SPD;
@@ -20,11 +21,11 @@ public class CharacterSelector : MonoBehaviour
     {
         classList = PhotonManager.instance.classList;
         currentClass = PhotonManager.instance.classID;
+        classimg = classDisplayChar.GetComponent<Image>();
     }
 
     private void Start()
     {
-        classimg = classDisplayChar.GetComponent<SpriteRenderer>();
         UpdateAppearance();
     }
 
@@ -35,7 +36,6 @@ public class CharacterSelector : MonoBehaviour
         {
             currentClass = 0;
         }
-        classimg.sprite = classList[currentClass].sprite;
         UpdateAppearance();
     }
 

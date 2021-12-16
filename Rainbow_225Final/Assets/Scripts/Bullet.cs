@@ -92,7 +92,10 @@ public class Bullet : MonoBehaviour
                 Bullet bullethit = collision.gameObject.GetComponent<Bullet>();
                 if (bullethit.creator != creator)
                 {
-                    destroyBullet(false);
+                    if (bullethit.damage <= damage)
+                    {
+                        destroyBullet(false);
+                    }
                 }
             }
         } 
@@ -140,7 +143,10 @@ public class Bullet : MonoBehaviour
                 Bullet bullethit = collision.gameObject.GetComponent<Bullet>();
                 if (bullethit.creator != creator)
                 {
-                    destroyBullet(false);
+                    if (bullethit.damage <= damage)
+                    {
+                        destroyBullet(false);
+                    }
                 }
             }
         }

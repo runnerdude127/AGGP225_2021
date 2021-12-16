@@ -171,6 +171,7 @@ GameObject:
   - component: {fileID: 7217218698252443736}
   - component: {fileID: -8301300926588522693}
   - component: {fileID: 6124125171082682045}
+  - component: {fileID: 660950093805381985}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -301,7 +302,7 @@ Animator:
   m_GameObject: {fileID: 4142125327117549197}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 8cb8fdd6885f9c449bd5bab6f8865e79, type: 2}
+  m_Controller: {fileID: 9100000, guid: 616a8a251c971254e8734c83ed9ccad3, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -455,9 +456,12 @@ MonoBehaviour:
     animations: {fileID: 0}
     smallIcon: {fileID: 0}
     bigIcon: {fileID: 0}
+    skillCost: 0
+    skillCooldown: 0
+  canJump: 1
   hand: {fileID: 3480114102183868777}
   myWeapon: {fileID: 4142125328522892860}
-  grounded: 0
+  grounded: 1
   floor:
     serializedVersion: 2
     m_Bits: 256
@@ -544,6 +548,24 @@ MonoBehaviour:
   m_SynchronizeLayers:
   - SynchronizeType: 0
     LayerIndex: 0
+--- !u!114 &660950093805381985
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4142125327117549197}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a6cd008288c62f45a2eb9f0d970ade2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  touchingSomething: 0
+  doingSkill: 0
+  skillReady: {fileID: 8300000, guid: 5ff84ae2b6caf6f40aa2ee5eeaef562d, type: 3}
+  ambCharge: {fileID: 8300000, guid: 2e79eab6fa99ce440b88c9fbed02e43e, type: 3}
+  ambDash: {fileID: 8300000, guid: 1796d5da3f9c00341a0d39870f5ddfa4, type: 3}
+  ambInterupt: {fileID: 8300000, guid: 8663b050b6a683f4d8ef391ae4436ae5, type: 3}
 --- !u!1 &4142125328522892863
 GameObject:
   m_ObjectHideFlags: 0

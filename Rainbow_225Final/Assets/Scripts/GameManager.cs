@@ -45,6 +45,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         if (playerPrefab)
         {
             GameObject spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Count)];
+            int id = PhotonManager.instance.getPlayerClass();
             PhotonNetwork.Instantiate(playerPrefab.name, spawnPoint.transform.position, spawnPoint.transform.rotation);
             Debug.Log("instantiate has been called from " + PhotonManager.instance.myUsername);
         }
