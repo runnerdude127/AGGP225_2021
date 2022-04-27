@@ -13,15 +13,20 @@ public class AnimationEffect : Effect
         base.Awake();
         anim = gameObject.GetComponentInChildren<Animator>();
         rend = gameObject.GetComponentInChildren<SpriteRenderer>();
+    }
+
+    public override void Start()
+    {
         if (effectSound.length < effectAnimation.length)
         {
             duration = effectAnimation.length;
-            
+
         }
         else
         {
             duration = effectSound.length;
             Destroy(rend, effectAnimation.length);
-        } 
+        }
+        base.Start();
     }
 }

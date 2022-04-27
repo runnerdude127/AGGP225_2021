@@ -168,10 +168,10 @@ GameObject:
   - component: {fileID: 4142125327117549206}
   - component: {fileID: 4142125327117549200}
   - component: {fileID: 7630897357545235347}
-  - component: {fileID: 7217218698252443736}
   - component: {fileID: -8301300926588522693}
   - component: {fileID: 6124125171082682045}
   - component: {fileID: 660950093805381985}
+  - component: {fileID: -4608425135111572689}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -213,7 +213,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 9d7fb50d66cfcd14b88fc87e5da955dc, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -231,10 +231,10 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 1
-  m_Sprite: {fileID: 21300000, guid: 3478c95376f9f6a40909fcfbcb401ba2, type: 3}
+  m_SortingLayerID: 999544051
+  m_SortingLayer: 6
+  m_SortingOrder: 0
+  m_Sprite: {fileID: 6286595657586805340, guid: a5d73518489bdac49af1ce0de17df530, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -258,18 +258,18 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0, y: -0.02}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 1}
+    oldSize: {x: 1.125, y: 1.125}
     newSize: {x: 0.16, y: 0.16}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 0.75, y: 0.91}
   m_EdgeRadius: 0
 --- !u!50 &4142125327117549196
 Rigidbody2D:
@@ -287,7 +287,7 @@ Rigidbody2D:
   m_LinearDrag: 0
   m_AngularDrag: 0.05
   m_GravityScale: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: aeaf91214e02e2f4ea4d3cf15e2063eb, type: 2}
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
@@ -302,7 +302,7 @@ Animator:
   m_GameObject: {fileID: 4142125327117549197}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 616a8a251c971254e8734c83ed9ccad3, type: 2}
+  m_Controller: {fileID: 9100000, guid: 7a760f60494815b4299bca157fd16df5, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -320,7 +320,7 @@ AudioSource:
   m_GameObject: {fileID: 4142125327117549197}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: -1297065865850561163, guid: 5cb693f5f985a7e40817ef031912a348, type: 2}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
   m_Volume: 1
@@ -367,7 +367,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0
+      value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -422,50 +422,70 @@ MonoBehaviour:
   isDamageable: 1
   hasHealth: 1
   respawns: 1
-  invulnTime: 0.1
+  isRespawning: 0
   isEnemy: 0
-  damageShake: 1
   doKnockback: 1
   deathEffect: {fileID: 2510311665152492995, guid: 10706d58693ab66488ed66087d8e5461, type: 3}
+  invulnTime: 3
+  dead: 0
+  invulnerable: 0
+  stunned: 0
+  flung: 0
+  stuck: 0
+  burning: 0
+  frozen: 0
+  poisoned: 0
+  nudging: 0
+  grounded: 1
+  faceTouch: 0
+  backTouch: 0
+  upTouch: 0
   currentHealth: 0
   health: 10
-  invulnurable: 0
-  blinkCooldown: 0
   spriteRend: {fileID: 0}
   anim: {fileID: 0}
   rb: {fileID: 0}
   col: {fileID: 0}
   source: {fileID: 0}
   basePitch: 0
+  respawnEffect: {fileID: 3107209113238325123, guid: 94a706c1c22b63f42a1c9c3eb6db419e, type: 3}
+  spawnEffect: {fileID: 7979194938331845354, guid: 982fcba8b984bec45a30c6214b28d78a, type: 3}
   damageSound: {fileID: 8300000, guid: 525c05e1c9d3272419e65c52730306c6, type: 3}
+  mortalDamage: {fileID: 8300000, guid: cefb6872b2701f443bb48c82c24de08c, type: 3}
   damageNumber: {fileID: 2456811001237180146, guid: ec862549f8eabc54789eb4602c709e4b, type: 3}
   damageRacked: 0
   checking: 0
+  humanPlayer: 0
   controllable: 1
   actOneAuto: 0
   actTwoAuto: 0
   actThreeAuto: 0
   actFourAuto: 0
-  myClass:
-    name: 
-    hp: 0
-    speed: 0
-    jumpHeight: 0
-    mystery: 0
-    sprite: {fileID: 0}
-    animations: {fileID: 0}
-    smallIcon: {fileID: 0}
-    bigIcon: {fileID: 0}
-    skillCost: 0
-    skillCooldown: 0
+  myClass: {fileID: 0}
   canJump: 1
+  smoothTime: 0.2
+  myHorizontalMovement: 0
+  myVerticalMovement: 0
+  currentSpecial: 0
+  weaponInventory: 
   hand: {fileID: 3480114102183868777}
   myWeapon: {fileID: 4142125328522892860}
-  grounded: 1
-  floor:
-    serializedVersion: 2
-    m_Bits: 256
+  flippingOnly: 0
+  climbing: 0
+  jumpPoof: {fileID: 5110020395255249116, guid: 2e7d9a53a7da6be418daac763f246368, type: 3}
+  landPoof: {fileID: 8152269265114168215, guid: 8e9015646b9247e4a84dd3833835398d, type: 3}
   jump: {fileID: 8300000, guid: a95fd6260f723634cbe1551ec1d6b667, type: 3}
+  land: {fileID: 8300000, guid: 26727aed467b2f34d84ca0f23f8c1945, type: 3}
+  step1: {fileID: 8300000, guid: 2646534eea7ec1e4599fda307d3286bb, type: 3}
+  step2: {fileID: 8300000, guid: c2c2d4b94d7220e478bd7a49d717f9e5, type: 3}
+  switchWeapon: {fileID: 8300000, guid: 6386c96004daac54fbe4d5554299f0df, type: 3}
+  myTeam:
+    name: 
+    teamColor: {r: 0, g: 0, b: 0, a: 0}
+    swapOnRespawn: 0
+    members: []
+    spawnPoints: []
+    respawning: 0
   pv: {fileID: 0}
 --- !u!114 &7630897357545235347
 MonoBehaviour:
@@ -486,28 +506,12 @@ MonoBehaviour:
   OwnershipTransfer: 0
   observableSearch: 2
   ObservedComponents:
-  - {fileID: 7217218698252443736}
   - {fileID: -8301300926588522693}
   - {fileID: 6124125171082682045}
+  - {fileID: -4608425135111572689}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
---- !u!114 &7217218698252443736
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4142125327117549197}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SynchronizePosition: 1
-  m_SynchronizeRotation: 1
-  m_SynchronizeScale: 0
-  m_UseLocal: 0
 --- !u!114 &-8301300926588522693
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -545,6 +549,12 @@ MonoBehaviour:
   - Type: 4
     SynchronizeType: 2
     Name: Jumping
+  - Type: 4
+    SynchronizeType: 2
+    Name: Dead
+  - Type: 4
+    SynchronizeType: 2
+    Name: Grounded
   m_SynchronizeLayers:
   - SynchronizeType: 0
     LayerIndex: 0
@@ -562,10 +572,49 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   touchingSomething: 0
   doingSkill: 0
+  invulnerable: 0
+  reflectState: 0
+  reflectBox: {fileID: 4389976817114457472, guid: 70ef486a6f27ed74a9eac78d874312e4, type: 3}
+  pillID: 26
+  snareID: 27
   skillReady: {fileID: 8300000, guid: 5ff84ae2b6caf6f40aa2ee5eeaef562d, type: 3}
   ambCharge: {fileID: 8300000, guid: 2e79eab6fa99ce440b88c9fbed02e43e, type: 3}
   ambDash: {fileID: 8300000, guid: 1796d5da3f9c00341a0d39870f5ddfa4, type: 3}
   ambInterupt: {fileID: 8300000, guid: 8663b050b6a683f4d8ef391ae4436ae5, type: 3}
+  canReflect: {fileID: 8300000, guid: 955e6c2ed846a6f41b8bc25212806125, type: 3}
+--- !u!114 &-4608425135111572689
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4142125327117549197}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8efc6b1d64977384eb3405357896c656, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_PositionModel:
+    SynchronizeEnabled: 1
+    TeleportEnabled: 1
+    TeleportIfDistanceGreaterThan: 10
+    InterpolateOption: 4
+    InterpolateMoveTowardsSpeed: 1
+    InterpolateLerpSpeed: 10
+    ExtrapolateOption: 0
+    ExtrapolateSpeed: 1
+    ExtrapolateIncludingRoundTripTime: 1
+    ExtrapolateNumberOfStoredPositions: 1
+  m_RotationModel:
+    SynchronizeEnabled: 1
+    InterpolateOption: 0
+    InterpolateRotateTowardsSpeed: 180
+    InterpolateLerpSpeed: 5
+  m_ScaleModel:
+    SynchronizeEnabled: 0
+    InterpolateOption: 0
+    InterpolateMoveTowardsSpeed: 1
+    InterpolateLerpSpeed: 0
 --- !u!1 &4142125328522892863
 GameObject:
   m_ObjectHideFlags: 0
@@ -596,7 +645,8 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0.18999997, y: 0.188, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 1767613416556349733}
   m_Father: {fileID: 2680540380246401204}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -637,10 +687,10 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: -1636546491
+  m_SortingLayer: 5
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: fd6b7cbcb3420dc45bad20278c6dc9fd, type: 3}
+  m_Sprite: {fileID: 1098179606456428539, guid: 170d0556531a3ab4c9ab8c4739c72912, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -663,18 +713,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 691eb4f6cf16efa419bad93aad239aba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentWeapon:
-    name: 
-    bulletType: {fileID: 0}
-    auto: 0
-    burst: 0
-    delay: 0
-    recoil: 0
-    accuracy: 0
-    sprite: {fileID: 0}
-    loadSound: {fileID: 0}
-    shootSound: {fileID: 0}
+  currentWeapon: {fileID: 0}
+  barrel: {fileID: 7420175384690354243}
   cooldown: 0
+  reloading: 0
   isWeapon: 1
   spriteRend: {fileID: 0}
   anim: {fileID: 0}
@@ -688,7 +730,7 @@ AudioSource:
   m_GameObject: {fileID: 4142125328522892863}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: -1297065865850561163, guid: 5cb693f5f985a7e40817ef031912a348, type: 2}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
   m_Volume: 1
@@ -735,7 +777,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0
+      value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -797,3 +839,33 @@ MonoBehaviour:
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
+--- !u!1 &7420175384690354243
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1767613416556349733}
+  m_Layer: 0
+  m_Name: Barrel
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1767613416556349733
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7420175384690354243}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.4, y: 0.09, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4142125328522892862}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

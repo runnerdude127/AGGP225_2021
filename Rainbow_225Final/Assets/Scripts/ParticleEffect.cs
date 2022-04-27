@@ -10,6 +10,6 @@ public class ParticleEffect : Effect
     {
         base.Awake();
         particles = gameObject.GetComponentInChildren<ParticleSystem>();
-        duration = particles.duration + particles.startLifetime;
+        duration = particles.main.duration + particles.main.startLifetimeMultiplier;
     }
 }

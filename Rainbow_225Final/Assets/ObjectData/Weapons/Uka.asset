@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d885f07d9940c994081e4cd0c5e67ede, type: 3}
+  m_Name: Uka
+  m_EditorClassIdentifier: 
+  id: 20
+  name: Uka
+  bulletID: 20
+  auto: 1
+  burst: 5
+  delay: 0.1
+  recoil: 0
+  accuracy: 25
+  sprite: {fileID: -7888296697152109952, guid: 170d0556531a3ab4c9ab8c4739c72912, type: 3}
+  pickupSprite: {fileID: -442967650780557704, guid: 85b1ca6da01eec147ba4225361eb6fe5, type: 3}
+  callout: {fileID: 8300000, guid: 15e5f0108bc27f646af94f16ea16d19f, type: 3}
+  loadSound: {fileID: 0}
+  shootSound: {fileID: 8300000, guid: 029534fb6a713c843883d16b85e0bec0, type: 3}
+  barrelOffset: {x: 0.7, y: 0.12}

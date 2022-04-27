@@ -55,6 +55,20 @@ MonoBehaviour:
   - nextWeapon
   - prevWeapon
   - setWeapon
+  - playerAutoSpecial
+  - spawnPlayer
+  - spawnPlayerOnTeam
+  - spawn
+  - collectWeapon
+  - addWeapon
+  - joinTeam
+  - playerEnterGame
+  - spawnObject
+  - makeWeaponPickup
+  - makePickup
+  - setType
+  - remove
+  - onCollect
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

@@ -35,16 +35,7 @@ public class PlayerGUI : MonoBehaviour
     private void Update()
     {
         inputStateUpdate();
-        inputProcessing();
         pauseMenu.SetActive(paused);
-    }
-
-    void inputProcessing()
-    {
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            PauseMenu();
-        }
     }
 
     void inputStateUpdate()

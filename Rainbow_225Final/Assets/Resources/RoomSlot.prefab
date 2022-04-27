@@ -176,7 +176,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
   m_AnchoredPosition: {x: 137.92, y: 88.21}
-  m_SizeDelta: {x: 235.14856, y: 61.588913}
+  m_SizeDelta: {x: 236, y: 64}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4657618880000794765
 CanvasRenderer:
@@ -215,7 +215,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 3.1
+  m_PixelsPerUnitMultiplier: 0.5
 --- !u!114 &4803619179523488800
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -286,9 +286,16 @@ MonoBehaviour:
   slotIcon: {fileID: 4657618880584485802}
   slotName: {fileID: 4657618880289827734}
   slotDetail: {fileID: 4657618880951153495}
-  deathmatchIcon: {fileID: 21300000, guid: 5b590827b17031e4fbba98b78f05146a, type: 3}
-  teamdeathIcon: {fileID: 21300000, guid: 5b590827b17031e4fbba98b78f05146a, type: 3}
-  juggernautIcon: {fileID: 21300000, guid: 5b590827b17031e4fbba98b78f05146a, type: 3}
+  deathmatchIcon: {fileID: 3752016821854407125, guid: ede272affe636f94cbcb0491c3b16502, type: 3}
+  intensedeathIcon: {fileID: 5687524595573011454, guid: ede272affe636f94cbcb0491c3b16502, type: 3}
+  ctfIcon: {fileID: -145808401816936526, guid: ede272affe636f94cbcb0491c3b16502, type: 3}
+  jewelsIcon: {fileID: 9047942841961285903, guid: ede272affe636f94cbcb0491c3b16502, type: 3}
+  roundthedemonIcon: {fileID: -292476657873066356, guid: ede272affe636f94cbcb0491c3b16502, type: 3}
+  kothIcon: {fileID: -5264349513311935306, guid: ede272affe636f94cbcb0491c3b16502, type: 3}
+  basketballIcon: {fileID: -2434362754934827416, guid: ede272affe636f94cbcb0491c3b16502, type: 3}
+  zombiesIcon: {fileID: -171452630345709121, guid: ede272affe636f94cbcb0491c3b16502, type: 3}
+  hidenseekIcon: {fileID: -8692956992130699471, guid: ede272affe636f94cbcb0491c3b16502, type: 3}
+  hotpotatoIcon: {fileID: 8990929236954338107, guid: ede272affe636f94cbcb0491c3b16502, type: 3}
 --- !u!114 &9156852435674743426
 MonoBehaviour:
   m_ObjectHideFlags: 0

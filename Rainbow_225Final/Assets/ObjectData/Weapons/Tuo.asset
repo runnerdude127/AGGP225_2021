@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d885f07d9940c994081e4cd0c5e67ede, type: 3}
+  m_Name: Tuo
+  m_EditorClassIdentifier: 
+  id: 19
+  name: Tuo
+  bulletID: 19
+  auto: 1
+  burst: 3
+  delay: 0.15
+  recoil: 2
+  accuracy: 12
+  sprite: {fileID: 698664279297640794, guid: 170d0556531a3ab4c9ab8c4739c72912, type: 3}
+  pickupSprite: {fileID: -4729994241249996425, guid: 85b1ca6da01eec147ba4225361eb6fe5, type: 3}
+  callout: {fileID: 8300000, guid: 047013bf06b29d34bbeac2b4261b0047, type: 3}
+  loadSound: {fileID: 0}
+  shootSound: {fileID: 8300000, guid: ee64946e13118394d9b2fdc393baafd2, type: 3}
+  barrelOffset: {x: 0.9, y: 0.09}

@@ -10,8 +10,10 @@ using Photon.Realtime;
 
 public class LobbyManager : MonoBehaviour
 {
-    public GameObject mainLobby;
-    public GameObject creationMenu;
+    public GameObject selectionMenu;
+    public GameObject hostMenu;
+    public GameObject joinMenu;
+    public GameObject serverMenu;
 
     #region lobby assets
     public GameObject playerSlotPrefab;
@@ -26,20 +28,26 @@ public class LobbyManager : MonoBehaviour
     public Button enterButton;
     #endregion
 
-    #region create assets
+    #region Entry Assets
     public TMP_InputField roomNameField;
     public TMP_Dropdown gamemodeDrop;
+    public TMP_Dropdown teamtypeDrop;
     public TMP_InputField maxPlayerField;
     public TMP_InputField timeLimitField;
+
+    public TMP_InputField ipField;
     #endregion
 
-
+    int currentMenu = 0;
     public RoomInfo myRoomInfo;
-    public int myGamemode;
+    
 
     public string roomName = "Default";
     public int maxPlayers = 4;
     public int timeLimit = 300;
+    public int gamemode;
+    public int teamtype;
+    public string map = "InGame";
 
     public static LobbyManager instance { get; private set; } // SINGLETON INSTANCE
 
@@ -59,7 +67,7 @@ public class LobbyManager : MonoBehaviour
     {
         PhotonNetwork.JoinLobby();
 
-        string name = PhotonManager.instance.myUsername;
+        string name = RainbowNetwork.instance.myUsername;
         if (name != null)
         {
             roomNameField.text = name + "'s Room";
@@ -71,7 +79,14 @@ public class LobbyManager : MonoBehaviour
         
         maxPlayerField.text = maxPlayers.ToString();
         timeLimitField.text = timeLimit.ToString();
-        
+
+        foreach (Gamemode gm in RainbowNetwork.instance.gamemodeList)
+        {
+            gamemodeDrop.options.Add(new TMP_Dropdown.OptionData() { text = gm.name, image = gm.icon});
+        }
+
+        ipField.text = RainbowNetwork.instance.networkAddress;
+
         /*if (MainMenuUI.instance.titleButtonClicked == true)
         {
             PhotonNetwork.JoinLobby();
@@ -89,60 +104,92 @@ public class LobbyManager : MonoBehaviour
 
     public void Update()
     {
-        roomName = roomNameField.text;
-        myGamemode = gamemodeDrop.value;
-
-        if (roomSelected)
+        /*if (roomSelected)
         {
             enterButton.interactable = true;
             roomSelectedName.text = roomSelected.slotName.text.ToString();
-            roomSelectedGamemode.text = "temp";
+            roomSelectedGamemode.text = roomSelected.gamemodeName;
         }
         else
         {
             enterButton.interactable = false;
             roomSelectedName.text = "Select a room to enter.";
             roomSelectedGamemode.text = "";
-        }   
+        } */  
     }
 
-    public void insertPlayer()
+    #region Button Clicks
+    public void OnHostClick()
     {
-        if (playerSlotPrefab)
-        {
-            //PhotonNetwork.Instantiate(playerSlotPrefab.name, playerlist.transform.position, Quaternion.identity);
-            //Debug.Log("Player Slot inserted");
-        }
-        else
-        {
-            Debug.Log("playerSlotPrefab not set. [insertPlayer][Start]");
-        }
+        hostMenu.SetActive(true);
+        selectionMenu.SetActive(false);
+        currentMenu = 1;
     }
 
-    public void insertRoom(RoomInfo roomData, int gamemode)
+    public void OnJoinLocalClick()
     {
-        if (roomSlotPrefab)
+        joinMenu.SetActive(true);
+        selectionMenu.SetActive(false);
+        currentMenu = 2;
+    }
+
+    public void OnJoinServerClick()
+    {
+        serverMenu.SetActive(true);
+        selectionMenu.SetActive(false);
+        currentMenu = 3;
+    }
+
+    public void OnGoButtonClick()
+    {
+        if (currentMenu == 0)   // MAIN SELECTION
         {
-            GameObject newSlot = Instantiate(roomSlotPrefab, roomlist.transform.position, Quaternion.identity);
-            RoomInfoSlot thisSlotData = newSlot.GetComponent<RoomInfoSlot>();
-            thisSlotData.infoSet(roomData.Name);
-            thisSlotData.roomExtras(gamemode, roomData.PlayerCount, roomData.MaxPlayers);
-            //PhotonNetwork.Instantiate(roomSlotPrefab.name, roomlist.transform.position, Quaternion.identity);
-            //Debug.Log("Room Slot inserted");
+
         }
-        else
+        else if (currentMenu == 1)  // CREATE ROOM
         {
-            Debug.Log("roomSlotPrefab not set. [insertRoom][Start]");
+            HostRoom();
+        }
+        else if (currentMenu == 2)  // JOIN ROOM via IPV4
+        {
+            JoinRoom(ipField.text);
+        }
+        else if (currentMenu == 3)  // JOIN ROOM via SERVER
+        {
+            JoinServer();
         }
     }
 
+    public void OnBackButtonClick()
+    {
+        if (currentMenu == 1)   // MAIN SELECTION
+        {
+            SceneManager.LoadScene("Title");
+        }
+        else if (currentMenu == 1)  // CREATE ROOM
+        {
+            joinMenu.SetActive(false);
+            selectionMenu.SetActive(true);
+        }
+        else if (currentMenu == 2)  // JOIN ROOM via IPV4
+        {
+            joinMenu.SetActive(false);
+            selectionMenu.SetActive(true);
+        }
+        else if (currentMenu == 3)  // JOIN ROOM via SERVER
+        {
+            serverMenu.SetActive(false);
+            selectionMenu.SetActive(true);
+        }
+        currentMenu = 0;
+    }
 
-
+    // Create Room Menu
     public void valChangeManual()
     {
         int newPlayers;
         int newTime;
-        
+
         if (timeLimitField.text == "")
         {
             timeLimitField.text = timeLimit.ToString();
@@ -150,7 +197,7 @@ public class LobbyManager : MonoBehaviour
 
         int.TryParse(maxPlayerField.text, out newPlayers);
         int.TryParse(timeLimitField.text, out newTime);
-        
+
 
         if (newPlayers < 2)
         {
@@ -215,28 +262,76 @@ public class LobbyManager : MonoBehaviour
         timeLimitField.text = timeLimit.ToString();
     }
 
-    public void createRoom()
+    #endregion
+
+    public void insertPlayer()
     {
-        if (PhotonManager.instance != null)
+        if (playerSlotPrefab)
         {
-            PhotonManager.instance.CreateRoom(roomName, maxPlayers, timeLimit, myGamemode);
+            //PhotonNetwork.Instantiate(playerSlotPrefab.name, playerlist.transform.position, Quaternion.identity);
+            //Debug.Log("Player Slot inserted");
         }
         else
         {
-            Debug.LogError("Unable to create room. Reason: PhotonManager not found");
+            Debug.Log("playerSlotPrefab not set. [insertPlayer][Start]");
         }
     }
 
-    public void joinRoom()
+    public void insertRoom(RoomInfo roomData, int gamemode)
     {
-        if (PhotonManager.instance != null)
+        if (roomSlotPrefab)
         {
-            PhotonNetwork.JoinRoom(roomSelected.slotName.text.ToString());
+            GameObject newSlot = Instantiate(roomSlotPrefab, roomlist.transform.position, Quaternion.identity);
+            RoomInfoSlot thisSlotData = newSlot.GetComponent<RoomInfoSlot>();
+            thisSlotData.infoSet(roomData.Name);
+            thisSlotData.roomExtras(gamemode, roomData.PlayerCount, roomData.MaxPlayers);
+            //PhotonNetwork.Instantiate(roomSlotPrefab.name, roomlist.transform.position, Quaternion.identity);
+            //Debug.Log("Room Slot inserted");
         }
         else
         {
-            Debug.LogError("Unable to join room. Reason: PhotonManager not found");
+            Debug.Log("roomSlotPrefab not set. [insertRoom][Start]");
         }
+    }
+
+
+
+   
+
+    public void HostRoom()
+    {
+        if (RainbowNetwork.instance != null)
+        {
+            roomName = roomNameField.text;
+            gamemode = gamemodeDrop.value;
+            Debug.Log("[LOBBY] Creating room " + roomName.ToString() + ". Gamemode: " + gamemode);
+            RainbowNetwork.instance.StartHost();
+            //PhotonManager.instance.CreateRoom(roomName, maxPlayers, timeLimit, gamemode, map);
+        }
+        else
+        {
+            Debug.LogError("Unable to create room. Reason: Network not found");
+        }
+
+    }
+
+    public void JoinRoom(string ip)
+    {
+        if (RainbowNetwork.instance != null)
+        {
+            RainbowNetwork.instance.networkAddress = ip;
+            RainbowNetwork.instance.StartClient();
+            //PhotonNetwork.JoinRoom(roomSelected.slotName.text.ToString());
+        }
+        else
+        {
+            Debug.LogError("Unable to create room. Reason: Network not found");
+        }
+    }
+
+    public void JoinServer()
+    {
+        Debug.LogError("Not yet implemented.");
     }
 
     public void randomRoom()
@@ -251,25 +346,8 @@ public class LobbyManager : MonoBehaviour
         }
     }
 
-    public void returnToMenu() // leave lobby
+    public void startGame(string map) // start game
     {
-        SceneManager.LoadScene("Title");
-    }
-
-    public void beginCreation()
-    {
-        creationMenu.SetActive(true);
-        mainLobby.SetActive(false);
-    }
-
-    public void leaveCreation()
-    {
-        creationMenu.SetActive(false);
-        mainLobby.SetActive(true);
-    }
-
-    public void startGame() // start game
-    {
-        PhotonManager.instance.StartGame();
+        PhotonManager.instance.StartGame(map);
     }
 }

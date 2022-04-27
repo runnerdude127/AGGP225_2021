@@ -18,20 +18,21 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     
     public bool canConnect;
 
-    public List<CharacterClass> classList;
+    public List<Gamemode> gamemodeList;
+    public List<CharClass> classList;
     public int classID = 0;
     public List<Weapon> weaponList;
     public int weaponID = 0;
+    public List<Bullet> bulletList;
 
-    RoomOptions myRoom;
-    string gameplayLevel = "InGame";
+    //string gameplayLevel = "InGame";
     public int timer;
-    int gm;
 
     List<RoomInfo> roomsAware;
 
     public const string GAMEMODE = "GM";
-    //public const string TIMELIMIT = "TL";
+    public const string TIMELIMIT = "TL";
+    public const string MAP = "MP";
 
     public static PhotonManager instance { get; private set; }
     void Awake()
@@ -77,19 +78,26 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     }
 
     #region Photon Callbacks
-    public void CreateRoom(string roomName, int maxPlayers, int timeLim, int gamemode)
+    public void CreateRoom(string roomName, int maxPlayers, int timeLim, int gamemode, string map)
     {
+        Debug.Log("[PHOTONMAN] Got request for room " + roomName.ToString() + ". Gamemode: " + gamemode);
+        string[] LobbyOptions = new string[2];
+        LobbyOptions[0] = GAMEMODE;
+        LobbyOptions[1] = MAP;
+
         RoomOptions roomCreated = new RoomOptions();
         roomCreated.MaxPlayers = (byte)maxPlayers;
 
         roomCreated.CustomRoomProperties = new ExitGames.Client.Photon.Hashtable();
         roomCreated.CustomRoomProperties.Add(GAMEMODE, gamemode);
-        //roomCreated.CustomRoomProperties.Add(TIMELIMIT, timeLim);
-        myRoom = roomCreated;
+        roomCreated.CustomRoomProperties.Add(MAP, map);
+        roomCreated.CustomRoomProperties.Add(TIMELIMIT, timeLim);
+
+        roomCreated.CustomRoomPropertiesForLobby = LobbyOptions;
 
         Debug.Log("Creating room... [PhotonManager][CreateRoom]");
         MainMenuUI.instance.UpdateLog("Creating room...");
-        PhotonNetwork.CreateRoom(roomName, myRoom, null);
+        PhotonNetwork.CreateRoom(roomName, roomCreated, null);
     }
     public void JoinRandomRoom()
     {
@@ -101,17 +109,17 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     {
         Debug.Log("Leaving... [PhotonManager][LeaveRoom]");
         MainMenuUI.instance.UpdateLog("Leaving...");
-
+        SceneManager.LoadScene("Title");
         PhotonNetwork.LeaveRoom();
     }
 
-    public void StartGame()
+    public void StartGame(string map)
     {
         Debug.Log("Starting the Game... [PhotonManager][StartGame]");
         MainMenuUI.instance.UpdateLog("Starting...");
         if (PhotonNetwork.IsMasterClient)
         {
-            PhotonNetwork.LoadLevel(gameplayLevel);
+            PhotonNetwork.LoadLevel(map);
         }
     }
 
@@ -120,7 +128,9 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         Debug.Log("Room '" + PhotonNetwork.CurrentRoom.Name + "' created. [PhotonManager][OnCreatedRoom]");
         MainMenuUI.instance.UpdateLog("Room '" + PhotonNetwork.CurrentRoom.Name + "' created.");
 
-        LobbyManager.instance.startGame();
+        StartGame((string)PhotonNetwork.CurrentRoom.CustomProperties[MAP]);
+
+        //LobbyManager.instance.startGame((string)PhotonNetwork.CurrentRoom.CustomProperties[MAP]);
         //LobbyManager.instance.openMenu.SetActive(true);
         //LobbyManager.instance.creationMenu.SetActive(false);
     }
@@ -167,7 +177,8 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         {
             foreach (RoomInfo roomData in roomsAware)
             {
-                LobbyManager.instance.insertRoom(roomData, 1/*(int)roomData.CustomProperties[GAMEMODE]*/);
+                Debug.Log("Room data for " + roomData.Name + "... Gamemode: " + (int)roomData.CustomProperties[GAMEMODE]);
+                LobbyManager.instance.insertRoom(roomData, (int)roomData.CustomProperties[GAMEMODE]);
             }
         } 
     }
@@ -186,7 +197,6 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     {
         Debug.Log("Left Room. [PhotonManager][OnLeftRoom]");
         MainMenuUI.instance.UpdateLog("Left the room.");
-        SceneManager.LoadScene("Title");
     }
     #endregion
 
@@ -195,6 +205,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     {
         Debug.Log("Disconnected! Reason: " + cause + " [PhotonManager][OnDisconnected]");
         MainMenuUI.instance.UpdateLog("Disconnected! Reason: " + cause);
+        //SceneManager.LoadScene("Title");
     }
     public override void OnCreateRoomFailed(short returnCode, string message)
     {
@@ -230,8 +241,20 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         return classID;
     }
 
-    public Weapon GetWeapon()
+    public Weapon GetWeapon(int ID)
     {
-        return weaponList[weaponID];
+        if (ID != -1)
+        {
+            return weaponList[ID];
+        }
+        else
+        {
+            return weaponList[0]; // failsafe
+        }
+    }
+
+    public Bullet GetBullet(int ID)
+    {
+        return bulletList[ID];
     }
 }

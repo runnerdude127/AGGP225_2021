@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class CharacterSelector : MonoBehaviour
 {
-    List<CharacterClass> classList;
+    List<CharClass> classList;
     public int currentClass;
     public GameObject classDisplayChar;
 
@@ -19,8 +19,8 @@ public class CharacterSelector : MonoBehaviour
 
     private void Awake()
     {
-        classList = PhotonManager.instance.classList;
-        currentClass = PhotonManager.instance.classID;
+        classList = RainbowNetwork.instance.classList;
+        currentClass = RainbowNetwork.instance.classID;
         classimg = classDisplayChar.GetComponent<Image>();
     }
 
@@ -53,10 +53,10 @@ public class CharacterSelector : MonoBehaviour
     {
         classimg.sprite = classList[currentClass].sprite;
         NAME.text = classList[currentClass].name;
-        HP.text = classList[currentClass].hp.ToString();
+        HP.text = classList[currentClass].health.ToString();
         SPD.text = classList[currentClass].speed.ToString();
         JMP.text = classList[currentClass].jumpHeight.ToString();
-        MYS.text = classList[currentClass].mystery.ToString();
+        MYS.text = classList[currentClass].unknownStat.ToString();
     }
 
     public int GetClass()

@@ -5,28 +5,16 @@ using TMPro;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-using Photon.Pun;
-using Photon.Realtime;
-
 public class MainMenuUI : MonoBehaviour
 {
     #region Main Menu UI
-    [SerializeField]
-    Button playButton;
+    public Button playButton;
+    public Button exitButton;
+    public TMP_Text log;
+    public TMP_InputField usernameField;
+    public CharacterSelector selector;
 
-    [SerializeField]
-    Button exitButton;
-
-    [SerializeField]
-    TMP_Text log;
-
-    [SerializeField]
-    TMP_InputField usernameField;
-
-    [SerializeField]
-    CharacterSelector selector;
-    CharacterClass playerClass;
-
+    CharClass playerClass;
     #endregion
 
     public static MainMenuUI instance { get; private set; } // SINGLETON INSTANCE
@@ -49,14 +37,14 @@ public class MainMenuUI : MonoBehaviour
         UnityEngine.Cursor.visible = true;
         if (usernameField)
         {
-            usernameField.text = PhotonManager.instance.myUsername;
+            usernameField.text = RainbowNetwork.instance.myUsername;
         }
     }
 
     #region UI Updates
     private void Update()
     {
-        if (PhotonNetwork.IsConnected && usernameField.text != "")
+        if (usernameField.text != "")
         {
             playButton.interactable = true;
         }
@@ -82,13 +70,13 @@ public class MainMenuUI : MonoBehaviour
     #region Button Clicks
     public void OnPlayClick()
     {        
-        if (PhotonManager.instance != null)
+        if (RainbowNetwork.instance != null)
         {
             if (!string.IsNullOrEmpty(usernameField.text))
             {
-                PhotonManager.instance.myUsername = usernameField.text;
+                RainbowNetwork.instance.myUsername = usernameField.text;
                 setClass();
-                SceneManager.LoadScene("Lobby");
+                SceneManager.LoadScene("MirrorLobby");
             }
             else
             {
@@ -97,7 +85,7 @@ public class MainMenuUI : MonoBehaviour
         }
         else
         {
-            Debug.LogError("Unable to create room. Reason: PhotonManager not found");
+            Debug.LogError("Unable to create room. Reason: Network not found");
         }
     }
 
@@ -110,7 +98,7 @@ public class MainMenuUI : MonoBehaviour
     {
         if (selector)
         {
-            PhotonManager.instance.classID = selector.GetClass();
+            RainbowNetwork.instance.classID = selector.GetClass();
         }
     }
     #endregion

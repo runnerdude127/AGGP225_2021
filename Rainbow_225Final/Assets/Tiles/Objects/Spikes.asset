@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d1514134bc4fbd41bb739b1b9a49231, type: 3}
+  m_Name: Spikes
+  m_EditorClassIdentifier: 
+  m_DefaultSprite: {fileID: -5062486230716756072, guid: e837ff5cef7c9154c95373a81b07ad77, type: 3}
+  m_DefaultGameObject: {fileID: 5263124416048749010, guid: 894382d0c40bc4749add507687f63a96, type: 3}
+  m_DefaultColliderType: 1
+  m_TilingRules: []

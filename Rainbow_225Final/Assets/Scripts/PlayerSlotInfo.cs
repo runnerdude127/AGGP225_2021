@@ -5,12 +5,11 @@ using TMPro;
 using UnityEngine.UI;
 
 using Photon.Pun;
-using Photon.Pun.Demo.PunBasics;
 using Photon.Realtime;
 
 public class PlayerSlotInfo : InfoSlot
 {
-    bool ready = false;
+    //bool ready = false;
 
     public Sprite Red;
     public Sprite Orange;

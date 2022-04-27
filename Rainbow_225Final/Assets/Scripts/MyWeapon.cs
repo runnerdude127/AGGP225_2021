@@ -2,16 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-using Photon.Pun;
-using Photon.Pun.Demo.PunBasics;
-using Photon.Realtime;
+using Mirror;
 
 public class MyWeapon : MonoBehaviour
 {
-    //public bool facesMouse;
     public Weapon currentWeapon;
+    public GameObject barrel;
 
     public bool cooldown;
+    public bool reloading;
     public bool isWeapon;
 
     public SpriteRenderer spriteRend;
@@ -32,10 +31,14 @@ public class MyWeapon : MonoBehaviour
         yield return new WaitForSeconds(delay);
     }
 
-    public IEnumerator Shoot(int player)
+    public IEnumerator Shoot(bool createdByPlayer, string creator)
     {
-        PhotonView playerMaker = PhotonView.Find(player);
-        GameObject maker = playerMaker.gameObject;
+        GameObject maker = GameObject.Find(creator);
+        PlayerMIRROR myPlayer = maker.GetComponent<PlayerMIRROR>();
+        myPlayer.ApplyRecoil(currentWeapon.recoil, -transform.right);
+
+        barrel.transform.localPosition = currentWeapon.barrelOffset;
+        Vector3 shotPos = barrel.transform.position;
 
         cooldown = true;
         StartCoroutine(ShootAnim(currentWeapon.delay));
@@ -44,27 +47,34 @@ public class MyWeapon : MonoBehaviour
         {
             for (int x = 0; x < currentWeapon.burst; x++)
             {
-                GameObject shot = Instantiate(currentWeapon.bulletType, transform.position, transform.parent.rotation * Quaternion.Euler(0, 0, Random.Range(-currentWeapon.accuracy, currentWeapon.accuracy)));
-                Bullet thisShot = shot.GetComponent<Bullet>();
-                if (maker)
-                {
-                    thisShot.creator = maker;
-                }
+                //GameManager.instance.GetComponent<PhotonView>().RPC("makeShot", RpcTarget.All, currentWeapon.bulletID, createdByPlayer, creatorID, shotPos.x, shotPos.y, currentWeapon.accuracy, transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z);
+                myPlayer.CmdMakeShot(currentWeapon.bulletID, createdByPlayer, creator, shotPos.x, shotPos.y, currentWeapon.accuracy, transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z);
             }
         }
         else
         {
-            GameObject shot = Instantiate(currentWeapon.bulletType, transform.position, transform.parent.rotation * Quaternion.Euler(0, 0, Random.Range(-currentWeapon.accuracy, currentWeapon.accuracy)));
-            Bullet thisShot = shot.GetComponent<Bullet>();
-            if (maker)
-            {
-                thisShot.creator = maker;
-            }
+            //GameManager.instance.GetComponent<PhotonView>().RPC("makeShot", RpcTarget.All, currentWeapon.bulletID, createdByPlayer, creatorID, shotPos.x, shotPos.y, currentWeapon.accuracy, transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z);
+            myPlayer.CmdMakeShot(currentWeapon.bulletID, createdByPlayer, creator, shotPos.x, shotPos.y, currentWeapon.accuracy, transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z);
         }
         source.PlayOneShot(currentWeapon.shootSound);
+        
 
-        yield return new WaitForSeconds(currentWeapon.delay);
-        cooldown = false;
+        StartCoroutine(reload());
         yield return new WaitForSeconds(0.05f);
+    }
+
+    public IEnumerator reload()
+    {
+        if (reloading == false)
+        {
+            reloading = true;
+            yield return new WaitForSeconds(currentWeapon.delay);
+            if (currentWeapon.delay > .5f)
+            {
+                source.PlayOneShot(currentWeapon.loadSound);
+            }    
+            cooldown = false;
+            reloading = false;
+        }
     }
 }

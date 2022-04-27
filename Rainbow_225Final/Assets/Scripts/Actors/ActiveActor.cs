@@ -4,8 +4,10 @@ using UnityEngine;
 
 public class ActiveActor : Actor
 {
+    public bool humanPlayer;
     public bool controllable;
     bool inputAllowed;
+    public ControlActions controls;
 
     public bool actOneAuto;
     public bool actTwoAuto;
@@ -15,6 +17,17 @@ public class ActiveActor : Actor
     public override void Awake()
     {
         base.Awake();
+        controls = new ControlActions();
+    }
+
+    private void OnEnable()
+    {
+        controls.Enable();
+    }
+
+    private void OnDisable()
+    {
+        controls.Disable();
     }
 
     public override void Start()
@@ -22,8 +35,9 @@ public class ActiveActor : Actor
         base.Start();
     }
 
-    public virtual void Update()
+    public override void Update()
     {
+        base.Update();
         inputAllowed = PlayerGUI.instance.playerInput;
         SpriteProcessing();
 
@@ -31,7 +45,10 @@ public class ActiveActor : Actor
         {
             if (inputAllowed)
             {
-                GetActions();
+                if (stunned == false && dead == false)
+                {
+                    GetActions();
+                }
             }
         }
         else
@@ -46,7 +63,10 @@ public class ActiveActor : Actor
         {
             if (inputAllowed)
             {
-                GetMovement();
+                if (stunned == false && dead == false)
+                {
+                    GetMovement();
+                }
             }
         }
         else
@@ -67,16 +87,21 @@ public class ActiveActor : Actor
 
     private void GetActions()
     {
+        if (controls.Base.Pause.triggered)
+        {
+            PlayerGUI.instance.PauseMenu();
+        }
+
         if (actOneAuto)
         {
-            if (Input.GetKey(KeyCode.Z))
+            if (controls.Base.Jump.ReadValue<bool>())
             {
                 actionOne();
             }
         }
         else
         {
-            if (Input.GetKeyDown(KeyCode.Z))
+            if (controls.Base.Jump.triggered)
             {
                 actionOne();
             }
@@ -84,14 +109,14 @@ public class ActiveActor : Actor
 
         if (actTwoAuto)
         {
-            if (Input.GetKey(KeyCode.X))
+            if (controls.Base.AutoShoot.ReadValue<float>() != 0)
             {
                 actionTwo();
             }
         }
         else
         {
-            if (Input.GetKeyDown(KeyCode.X))
+            if (controls.Base.Shoot.triggered)
             {
                 actionTwo();
             }
@@ -99,14 +124,11 @@ public class ActiveActor : Actor
 
         if (actThreeAuto)
         {
-            if (Input.GetKey(KeyCode.C))
-            {
-                actionThree();
-            }
+            actionThree(controls.Base.AutoSkill.ReadValue<float>() != 0);
         }
         else
         {
-            if (Input.GetKeyDown(KeyCode.C))
+            if (controls.Base.Skill.triggered)
             {
                 actionThree();
             }
@@ -114,25 +136,25 @@ public class ActiveActor : Actor
 
         if (actFourAuto)
         {
-            if (Input.GetKey(KeyCode.V))
+            if (controls.Base.ActionB.ReadValue<bool>())
             {
                 actionFour();
             }
         }
         else
         {
-            if (Input.GetKeyDown(KeyCode.V))
+            if (controls.Base.ActionB.triggered)
             {
                 actionFour();
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.LeftShift))
+        if (controls.Base.NextWep.triggered)
         {
             leftAction();
         }
 
-        if (Input.GetKeyDown(KeyCode.RightShift))
+        if (controls.Base.PrevWep.triggered)
         {
             rightAction();
         }
@@ -146,6 +168,11 @@ public class ActiveActor : Actor
     public virtual void actionTwo()
     {
         // X key
+    }
+
+    public virtual void actionThree(bool keyPressed)
+    {
+        // C key
     }
 
     public virtual void actionThree()

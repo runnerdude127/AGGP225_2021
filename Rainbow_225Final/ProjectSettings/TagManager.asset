@@ -5,6 +5,8 @@ TagManager:
   serializedVersion: 2
   tags:
   - Bullet
+  - Reflector
+  - Pickup
   layers:
   - Default
   - TransparentFX
@@ -41,6 +43,24 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: StageBG
+    uniqueID: 2054960765
+    locked: 0
+  - name: Bullet
+    uniqueID: 1288295245
+    locked: 0
+  - name: Stage
+    uniqueID: 1360638385
+    locked: 0
+  - name: FallOff
+    uniqueID: 3075970549
+    locked: 0
+  - name: Weapons
+    uniqueID: 2658420805
+    locked: 0
+  - name: Players
+    uniqueID: 999544051
     locked: 0
   - name: UI
     uniqueID: 3494069869

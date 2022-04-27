@@ -5,18 +5,13 @@ using TMPro;
 using UnityEngine.UI;
 
 using Photon.Pun;
-using Photon.Pun.Demo.PunBasics;
 using Photon.Realtime;
 
 public class RoomInfoSlot : InfoSlot
 {
     public TMP_Text slotDetail;
-
-    public Sprite deathmatchIcon;
-    public Sprite teamdeathIcon;
-    public Sprite juggernautIcon;
-
-    int gamemode;
+    Gamemode roomGamemode;
+    public string gamemodeName;
 
     public override void Awake()
     {
@@ -42,20 +37,12 @@ public class RoomInfoSlot : InfoSlot
         base.infoSet(name);
         //roomExtras(PhotonManager.instance.GetRoomSize(name), detail);
     }
+
     public void roomExtras(int gamemodeInfo, int players, int roomMax)
     {
         slotDetail.text = players.ToString() + "/" + roomMax.ToString();
-        if (gamemodeInfo == 0)
-        {
-            slotIcon.sprite = deathmatchIcon;
-        }
-        else if (gamemodeInfo == 1)
-        {
-            slotIcon.sprite = teamdeathIcon;
-        }
-        else if (gamemodeInfo == 2)
-        {
-            slotIcon.sprite = juggernautIcon;
-        }
+        roomGamemode = PhotonManager.instance.gamemodeList[gamemodeInfo];
+        slotIcon.sprite = roomGamemode.icon;
+        gamemodeName = roomGamemode.name;
     }
 }

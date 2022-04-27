@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ed1d5e95373e8741be6d4db5edec61c, type: 3}
+  m_Name: Yellow
+  m_EditorClassIdentifier: 
+  name: Canary
+  health: 5
+  speed: 3
+  jumpHeight: 7
+  unknownStat: 0
+  skillCost: 0
+  autoSkill: 1
+  sprite: {fileID: 8499740148186698395, guid: 725cf83aa815e154cbf0a1d8abdc3acc, type: 3}
+  animations: {fileID: 9100000, guid: 2a88d6b1eb96e8146bc764727e7d2882, type: 2}
+  smallIcon: {fileID: 1375065177354957178, guid: 95e9ebb772862b5488028a99de9fd535, type: 3}
+  bigIcon: {fileID: 8558633213039616950, guid: 8ec51c4771ae9f64abf11aa66b1c9b2c, type: 3}

@@ -13,11 +13,12 @@ public class Effect : MonoBehaviour
 
     public virtual void Awake()
     {
-        source = gameObject.AddComponent<AudioSource>();
+        source = gameObject.GetComponent<AudioSource>();
         if (collides)
         {
             col = gameObject.GetComponent<Collider2D>();
         }
+        
     }
 
     public virtual void Start()
@@ -30,6 +31,20 @@ public class Effect : MonoBehaviour
         {
             Destroy(col, duration / 4);
         }
-        Destroy(gameObject, duration);
+        if (effectSound)
+        {
+            if (effectSound.length < duration)
+            {
+                Destroy(gameObject, duration);
+            }
+            else
+            {
+                Destroy(gameObject, effectSound.length);
+            }
+        }
+        else
+        {
+            Destroy(gameObject, duration);
+        }
     }
 }

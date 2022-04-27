@@ -26,6 +26,48 @@ TextureImporter:
   - first:
       213: 7829259069414977506
     second: Red_7
+  - first:
+      213: 517297020108950540
+    second: Red_0
+  - first:
+      213: -5502002975719370850
+    second: Red_1
+  - first:
+      213: -7800485053812321503
+    second: Red_2
+  - first:
+      213: 2590017431140808642
+    second: Red_3
+  - first:
+      213: 9213401111693234501
+    second: Red_4
+  - first:
+      213: 3583479610815016817
+    second: Red_5
+  - first:
+      213: 6727224032750744978
+    second: Red_6
+  - first:
+      213: 4372571314196235095
+    second: Red_7
+  - first:
+      213: -5815146464303538831
+    second: Red_8
+  - first:
+      213: 2129389494081237454
+    second: Red_9
+  - first:
+      213: -7436031258583995892
+    second: Red_8
+  - first:
+      213: -4693856813201371312
+    second: Red_9
+  - first:
+      213: 5577207492566289022
+    second: Red_10
+  - first:
+      213: -8174016207417349085
+    second: Red_11
   externalObjects: {}
   serializedVersion: 11
   mipmaps:
@@ -128,10 +170,10 @@ TextureImporter:
       name: Red_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 16
-        height: 16
+        x: 1
+        y: 77
+        width: 18
+        height: 18
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -139,8 +181,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: c5a89f851797e3750800000000000000
-      internalID: 6286595657586805340
+      spriteID: c0c46f626eecd2700800000000000000
+      internalID: 517297020108950540
       vertices: []
       indices: 
       edges: []
@@ -149,10 +191,10 @@ TextureImporter:
       name: Red_1
       rect:
         serializedVersion: 2
-        x: 16
-        y: 0
-        width: 16
-        height: 16
+        x: 21
+        y: 77
+        width: 18
+        height: 18
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -160,8 +202,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 7d90f613d4bf26610800000000000000
-      internalID: 1613127925512473047
+      spriteID: e9fca17c175f4a3b0800000000000000
+      internalID: -5502002975719370850
       vertices: []
       indices: 
       edges: []
@@ -170,10 +212,10 @@ TextureImporter:
       name: Red_2
       rect:
         serializedVersion: 2
-        x: 32
-        y: 0
-        width: 16
-        height: 16
+        x: 41
+        y: 77
+        width: 18
+        height: 18
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -181,8 +223,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: cd713e842af060a40800000000000000
-      internalID: 5333967998348892124
+      spriteID: 123d5cb1c2c1fb390800000000000000
+      internalID: -7800485053812321503
       vertices: []
       indices: 
       edges: []
@@ -191,10 +233,10 @@ TextureImporter:
       name: Red_3
       rect:
         serializedVersion: 2
-        x: 48
-        y: 0
-        width: 16
-        height: 16
+        x: 61
+        y: 77
+        width: 18
+        height: 18
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -202,8 +244,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 758454bc70e884120800000000000000
-      internalID: 2398322965701019735
+      spriteID: 2c7b731912791f320800000000000000
+      internalID: 2590017431140808642
       vertices: []
       indices: 
       edges: []
@@ -212,10 +254,10 @@ TextureImporter:
       name: Red_4
       rect:
         serializedVersion: 2
-        x: 64
-        y: 0
-        width: 16
-        height: 16
+        x: 1
+        y: 57
+        width: 18
+        height: 18
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -233,10 +275,10 @@ TextureImporter:
       name: Red_5
       rect:
         serializedVersion: 2
-        x: 80
-        y: 0
-        width: 16
-        height: 16
+        x: 21
+        y: 57
+        width: 18
+        height: 18
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -254,10 +296,10 @@ TextureImporter:
       name: Red_6
       rect:
         serializedVersion: 2
-        x: 96
-        y: 0
-        width: 16
-        height: 16
+        x: 41
+        y: 57
+        width: 18
+        height: 18
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -275,10 +317,10 @@ TextureImporter:
       name: Red_7
       rect:
         serializedVersion: 2
-        x: 112
-        y: 0
-        width: 16
-        height: 16
+        x: 61
+        y: 57
+        width: 18
+        height: 18
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -288,6 +330,48 @@ TextureImporter:
       bones: []
       spriteID: 2ef2cf674ad17ac60800000000000000
       internalID: 7829259069414977506
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Red_8
+      rect:
+        serializedVersion: 2
+        x: 1
+        y: 37
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 17d9156c9137c4fa0800000000000000
+      internalID: -5815146464303538831
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Red_9
+      rect:
+        serializedVersion: 2
+        x: 21
+        y: 37
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ec1392f767c1d8d10800000000000000
+      internalID: 2129389494081237454
       vertices: []
       indices: 
       edges: []

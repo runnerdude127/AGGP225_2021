@@ -3,32 +3,52 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using Photon.Pun;
-using Photon.Pun.Demo.PunBasics;
 using Photon.Realtime;
 
-public class Player : ActiveActor
+/*public class Player : ActiveActor
 {
-    public CharacterClass myClass;
-    
+    public CharClass myClass;
+
     float speed = 7f;
     float jumpHeight = 7f;
     public bool canJump = true;
     Skill mySkill;
+    [SerializeField]
+    float smoothTime = .1f;
+    public float myHorizontalMovement = 0f;
+    public float myVerticalMovement = 0f;
+    float inputVelocity;
+    bool waitingForLand = false;
+    bool stepProcess = false;
+    float lastMovement = 0;
 
-    int currentSpecial;
+    public int currentSpecial;
     int special = 100;
 
     Meter healthBar;
     Meter specialBar;
+
+    public List<int> weaponInventory;
+    bool emptyHanded = true;
 
     public GameObject hand;
     Animator handAnim;
     public MyWeapon myWeapon;
     int currentWepID;
 
-    public bool grounded;
-    public LayerMask floor;
+    public bool flippingOnly = false;
+    public bool climbing = false;
+
+    public GameObject jumpPoof;
+    public GameObject landPoof;
+
     public AudioClip jump;
+    public AudioClip land;
+    public AudioClip step1;
+    public AudioClip step2;
+    public AudioClip switchWeapon;
+
+    public Team myTeam;
 
     [HideInInspector]
     public PhotonView pv;
@@ -41,21 +61,23 @@ public class Player : ActiveActor
         pv = gameObject.GetPhotonView();
         handAnim = hand.GetComponent<Animator>();
         mySkill = gameObject.GetComponent<Skill>();
+        weaponInventory = new List<int>();
+
+        hand.SetActive(false);
     }
 
     public override void Start()
     {
         base.Start();
         getClass();
-        
+
         currentHealth = health;
         currentSpecial = special;
         rb.velocity = new Vector2(0, 0);
 
-        if (gameObject.GetPhotonView().IsMine)
+        if (pv.IsMine)
         {
             PlayerGUI.instance.portraitIcon.sprite = myClass.bigIcon;
-            pv.RPC("setWeapon", RpcTarget.AllBuffered);
 
             healthBar = PlayerGUI.instance.thisPlayerHealth;
             specialBar = PlayerGUI.instance.thisPlayerCharge;
@@ -65,7 +87,10 @@ public class Player : ActiveActor
 
             specialBar.SetMax(special);
             specialBar.SetCurrent(currentSpecial);
+
+            pv.RPC("spawn", RpcTarget.All, true);
         }
+        spriteRend.material.SetColor("Color_54667E5E", myTeam.teamColor);
     }
 
     void getClass()
@@ -87,8 +112,17 @@ public class Player : ActiveActor
         anim.runtimeAnimatorController = myClass.animations;
         speed = 4 + myClass.speed;
         jumpHeight = 11 + (myClass.jumpHeight / 2);
-        health = (myClass.hp * 20);
+        health = (myClass.health * 20);
+        actThreeAuto = myClass.autoSkill;
     }
+
+    //[PunRPC]
+    //public void joinTeam(int teamID)
+    //{
+    //    Team teamAssigned = GameManager.instance.getTeam(teamID);
+    //    teamAssigned.members.Add(this);
+    //    myTeam = teamAssigned;
+    //}
 
     public override void Update()
     {
@@ -96,9 +130,20 @@ public class Player : ActiveActor
         {
             base.Update();
         }
-        if (damageRacked > 0 && checking == false)
+        else
         {
-            StartCoroutine(damageNumberCheck());
+            checkBlinks();
+        }
+
+        if (dead == false && myTeam != null)
+        {
+            spriteRend.material.SetInt("Boolean_E47E2B67", 1);
+            spriteRend.material.SetColor("Color_54667E5E", myTeam.teamColor);
+        }
+
+        if (grounded == false && waitingForLand == false)
+        {
+            StartCoroutine(waitForLand());
         }
     }
 
@@ -121,36 +166,122 @@ public class Player : ActiveActor
 
     public override void GetMovement()
     {
-        if (rb.velocity.y == 0)
-        {
-            grounded = true;
-        }
-        else
-        {
-            grounded = false;
-        }
-
         if (pv.IsMine)
         {
-            float h = Input.GetAxis("Horizontal");
-            gameObject.transform.Translate((h * h) * speed * Time.deltaTime, 0, 0);
+            if (climbing)
+            {
+                GetClimbing();
+            }
+            else
+            {
+                GetWalking();
+            }
 
-            if (h < 0)
+
+            if (controls.Base.Move.ReadValue<float>() < 0)
             {
                 gameObject.transform.eulerAngles = new Vector3(transform.rotation.x, 180, transform.rotation.z);
             }
-            else if (h > 0)
+            else if (controls.Base.Move.ReadValue<float>() > 0)
             {
                 gameObject.transform.eulerAngles = new Vector3(transform.rotation.x, 0, transform.rotation.z);
             }
-        } 
+            /*if (myHorizontalMovement < 0)
+            {
+                gameObject.transform.eulerAngles = new Vector3(transform.rotation.x, 180, transform.rotation.z);
+            }
+            else if (myHorizontalMovement > 0)
+            {
+                gameObject.transform.eulerAngles = new Vector3(transform.rotation.x, 0, transform.rotation.z);
+            }
+        }
     }
+
+    void GetWalking()
+    {
+        float horizontalMove = controls.Base.Move.ReadValue<float>();
+        myHorizontalMovement = Mathf.SmoothDamp(myHorizontalMovement, horizontalMove, ref inputVelocity, smoothTime);
+        if (horizontalMove != 0 && stepProcess == false && grounded == true)
+        {
+            StartCoroutine(walkSound());
+        }
+        if (flippingOnly == false && faceTouch == false)
+        {
+            if (stuck)
+            {
+                if (horizontalMove != lastMovement)
+                {
+                    if (horizontalMove != 0)
+                    {
+                        nudging = true;
+                    }
+                    lastMovement = horizontalMove;
+                }
+                else
+                {
+                    nudging = false;
+                }
+            }
+            else
+            {
+                gameObject.transform.Translate((myHorizontalMovement * myHorizontalMovement) * speed * Time.deltaTime, 0, 0);
+            }
+        }
+        else if (faceTouch)
+        {
+            //rb.velocity = new Vector2(0rb.velocity.x / 2, rb.velocity.y);
+        }
+    }
+
+    void GetClimbing()
+    {
+        float verticalMove = controls.Base.Climb.ReadValue<float>();
+        //Debug.Log(verticalMove);
+        myVerticalMovement = Mathf.SmoothDamp(myVerticalMovement, verticalMove, ref inputVelocity, smoothTime);
+        if (flippingOnly == false && faceTouch == true)
+        {
+            gameObject.transform.Translate(0, myVerticalMovement * speed * Time.deltaTime, 0);
+        }
+    }
+
+    IEnumerator walkSound()
+    {
+        stepProcess = true;
+        if (controls.Base.Move.ReadValue<float>() != 0 && stepProcess == true && grounded == true)
+        {
+            source.PlayOneShot(step1);
+            yield return new WaitForSeconds(1 / speed);
+        }
+        else
+        {
+            stepProcess = false;
+        }
+        if (controls.Base.Move.ReadValue<float>() != 0 && stepProcess == true && grounded == true)
+        {
+            source.PlayOneShot(step2);
+            yield return new WaitForSeconds(1 / speed);
+        }
+        else
+        {
+            stepProcess = false;
+        }
+        if (controls.Base.Move.ReadValue<float>() != 0 && stepProcess == true && grounded == true)
+        {
+            StartCoroutine(walkSound());
+        }
+        else
+        {
+            stepProcess = false;
+        }
+    }
+
+
 
     #region Input Actions
 
     public override void actionOne()
     {
-        if (rb.velocity.y == 0 && canJump)
+        if (grounded == true && canJump)
         {
             StartCoroutine(Jump());
         }
@@ -158,56 +289,81 @@ public class Player : ActiveActor
 
     public override void actionTwo()
     {
-        if (myWeapon.isWeapon && myWeapon.cooldown == false)
+        if (myWeapon.isWeapon && myWeapon.cooldown == false && emptyHanded == false)
         {
-            pv.RPC("makeShot", RpcTarget.All);
-            ApplyRecoil(myWeapon.currentWeapon.recoil, -transform.right);
+            StartCoroutine(myWeapon.Shoot(true, pv.ViewID));
         }
+    }
+
+    public override void actionThree(bool keyPressed)
+    {
+        pv.RPC("playerAutoSpecial", RpcTarget.All, myClass.skillCost, keyPressed);
     }
 
     public override void actionThree()
     {
-        pv.RPC("playerSpecial", RpcTarget.All, 10);
+        pv.RPC("playerSpecial", RpcTarget.All, myClass.skillCost);
     }
 
     public override void actionFour()
     {
-        pv.RPC("playerDamage", RpcTarget.All, Vector3.zero, 20, pv.ViewID);
+        pv.RPC("playerDamage", RpcTarget.All, Vector3.zero, 20, pv.ViewID, .1f);
     }
 
     public override void leftAction()
     {
-        pv.RPC("nextWeapon", RpcTarget.AllBuffered);
-        //source.PlayOneShot(weaponList[currentWeapon].loadSound);
+        if (!emptyHanded)
+        {
+            pv.RPC("nextWeapon", RpcTarget.AllBuffered);
+            if (weaponInventory.Count != 1)
+            {
+                source.PlayOneShot(switchWeapon);
+            }
+        }
     }
 
     public override void rightAction()
     {
-        pv.RPC("prevWeapon", RpcTarget.AllBuffered);
-        //source.PlayOneShot(weaponList[currentWeapon].loadSound);
+        if (!emptyHanded)
+        {
+            pv.RPC("prevWeapon", RpcTarget.AllBuffered);
+            if (weaponInventory.Count != 1)
+            {
+                source.PlayOneShot(switchWeapon);
+            }
+        }
     }
 
     #endregion
 
     [PunRPC]
-    public void setWeapon()
+    public void setWeapon(bool empty, int weaponID)
     {
-        currentWepID = PhotonManager.instance.weaponID;
-        myWeapon.currentWeapon = PhotonManager.instance.weaponList[currentWepID];
-        actTwoAuto = myWeapon.currentWeapon.auto;
-        myWeapon.spriteRend.sprite = myWeapon.currentWeapon.sprite;
+        if (empty == true)
+        {
+            currentWepID = 0;
+            myWeapon.currentWeapon = PhotonManager.instance.weaponList[currentWepID];
+            myWeapon.spriteRend.enabled = false;
+        }
+        else
+        {
+            myWeapon.spriteRend.enabled = true;
+            myWeapon.currentWeapon = PhotonManager.instance.weaponList[weaponInventory[currentWepID]];
+            actTwoAuto = myWeapon.currentWeapon.auto;
+            myWeapon.spriteRend.sprite = myWeapon.currentWeapon.sprite;
+        }
     }
 
     [PunRPC]
     public void nextWeapon()
     {
         currentWepID++;
-        if (currentWepID == PhotonManager.instance.weaponList.Count)
+        if (currentWepID == weaponInventory.Count)
         {
             currentWepID = 0;
         }
 
-        myWeapon.currentWeapon = PhotonManager.instance.weaponList[currentWepID];
+        myWeapon.currentWeapon = PhotonManager.instance.weaponList[weaponInventory[currentWepID]];
         actTwoAuto = myWeapon.currentWeapon.auto;
         myWeapon.spriteRend.sprite = myWeapon.currentWeapon.sprite;
     }
@@ -218,24 +374,22 @@ public class Player : ActiveActor
         currentWepID--;
         if (currentWepID < 0)
         {
-            currentWepID = PhotonManager.instance.weaponList.Count - 1;
+            currentWepID = weaponInventory.Count - 1;
         }
 
-        myWeapon.currentWeapon = PhotonManager.instance.weaponList[currentWepID];
+        myWeapon.currentWeapon = PhotonManager.instance.weaponList[weaponInventory[currentWepID]];
         actTwoAuto = myWeapon.currentWeapon.auto;
         myWeapon.spriteRend.sprite = myWeapon.currentWeapon.sprite;
     }
 
     [PunRPC]
-    public void makeShot()
+    public void playerDamage(Vector3 knockDir, int damage, int attacker, float hitStun)
     {
-        StartCoroutine(myWeapon.Shoot(pv.ViewID));
-    }
-
-    [PunRPC]
-    public void playerDamage(Vector3 knockDir, int damage, int attacker)
-    {
-        StartCoroutine(Hurt(knockDir, damage, attacker));
+        StartCoroutine(Hurt(knockDir, damage, attacker, hitStun));
+        if (pv.IsMine && invulnerable == false && hitStun >= .05f)
+        {
+            StartCoroutine(GameManager.instance.mainCam.CameraShake(hitStun, damage * .01f));
+        }
     }
 
     [PunRPC]
@@ -244,91 +398,233 @@ public class Player : ActiveActor
         if (mySkill.doingSkill == false)
         {
             Debug.Log(gameObject.name + " used their special");
+            mySkill.activateSkill(myClass, specialCost);
             currentSpecial -= specialCost;
-            mySkill.activateSkill(myClass);
         }
     }
 
     [PunRPC]
-    public void playerDies(string killer)
+    public void playerAutoSpecial(int specialCost, bool autoSkill)
     {
+        if (autoSkill == true)
+        {
+            if (mySkill.doingSkill == false)
+            {
+                Debug.Log(gameObject.name + " started their special");
+                mySkill.activateSkill(myClass, specialCost);
+            }
+        }
+        else
+        {
+            if (mySkill.doingSkill == true)
+            {
+                Debug.Log(gameObject.name + " stopped their special");
+                mySkill.stopSkill();
+            }
+        }
+    }
+
+    [PunRPC]
+    public void playerDies(string killer, float kx, float ky, float kz)
+    {
+        //drop weapon holding
         if (pv.IsMine)
         {
             PlayerGUI.instance.playerDeath(true);
         }
-        StartCoroutine(actorDies(killer));
+        hand.SetActive(false);
+        StartCoroutine(actorDies(killer, new Vector3(kx, ky, kz)));
     }
 
-    public override Vector2 getSpawnPoint()
+    [PunRPC]
+    void spawn(bool firstSpawn)
     {
-        if (pv.IsMine)
-        {
-            healthBar.ResetMeter(health);
-            PlayerGUI.instance.playerDeath(false);
-        }
-        return GameManager.instance.getSpawn().transform.position;
+        StartCoroutine(Respawn(firstSpawn));
     }
+
+    public override IEnumerator Respawn(bool firstSpawn)
+    {
+        StartCoroutine(base.Respawn(firstSpawn));
+        yield return new WaitUntil(()=> isRespawning == false);
+
+        if (myTeam != null)
+        {
+            spriteRend.material.SetInt("Boolean_E47E2B67", 1);
+            spriteRend.material.SetColor("Color_54667E5E", myTeam.teamColor);
+        }
+        else
+        {
+            spriteRend.material.SetInt("Boolean_E47E2B67", 0);
+        }
+
+        currentWepID = 0;
+        emptyHanded = true;
+        weaponInventory.Clear();
+
+        // give starting weapons ( if any )
+
+        if (weaponInventory.Count > 0)
+        {
+            hand.SetActive(true);
+            emptyHanded = false;
+            pv.RPC("setWeapon", RpcTarget.AllBuffered, emptyHanded, weaponInventory[currentWepID]);
+            StartCoroutine(myWeapon.reload());
+        }
+
+        if (myWeapon.reloading == true)
+        {
+            myWeapon.reloading = false;
+        }
+        StartCoroutine(invulnFrames(0f));
+    }
+
+    //public override Vector2 getSpawnPoint()
+    //{
+    //    if (pv.IsMine)
+    //    {
+    //        healthBar.ResetMeter(health);
+    //        PlayerGUI.instance.playerDeath(false);
+    //    }
+    //    return GameManager.instance.getSpawn(this).transform.position;
+    //}
 
     IEnumerator Jump()
     {
         source.PlayOneShot(jump);
+        Instantiate(jumpPoof, new Vector3(transform.position.x, transform.position.y, -1) + (Vector3.down * col.bounds.extents.y), Quaternion.Euler(-90, 0, 0));
         rb.AddForce(new Vector2(0f, jumpHeight), ForceMode2D.Impulse);
 
-        yield return new WaitUntil(() => Input.GetAxis("Vertical") == 0);     
+        yield return new WaitUntil(() => grounded == true);     
+    }
+
+    IEnumerator waitForLand()
+    {
+        waitingForLand = true;
+        yield return new WaitUntil(() => grounded == true);
+        landing();
+    }
+
+    void landing()
+    {
+        source.PlayOneShot(land);
+        Instantiate(landPoof, new Vector3(transform.position.x, transform.position.y, -1) + (Vector3.down * col.bounds.extents.y), Quaternion.Euler(-90, 0, 0));
+        waitingForLand = false;
     }
 
     public void ApplyRecoil(float recoil, Vector2 direction)
     {
-        //rb.velocity = (rb.velocity / 2);
-        //rb.AddForce(direction * recoil, ForceMode2D.Impulse);
+        if (grounded)
+        {
+            if (recoil > 9)
+            {
+                rb.AddForce(direction * recoil, ForceMode2D.Impulse);
+            }
+        }
+        else
+        {
+            rb.AddForce(direction * recoil, ForceMode2D.Impulse);
+        }
+        
+        if (recoil != 0)
+        {
+            if (handAnim.GetBool("LookDown"))
+            {
+                rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y / 2);
+            }
+            else
+            {
+                if (!grounded)
+                {
+                    rb.velocity = new Vector2(rb.velocity.x / 3, rb.velocity.y);
+                }
+                else if (grounded)
+                {
+                    rb.velocity = new Vector2(rb.velocity.x / 2, rb.velocity.y);
+                }
+            }
+        }
+    }
+
+    public bool hasWeapon(int weaponCheck)
+    {
+        if (weaponInventory.Contains(weaponCheck))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public void collectWeapon(int weaponCollected)
+    {
+        pv.RPC("addWeapon", RpcTarget.AllBuffered, weaponCollected);
+    }
+
+    [PunRPC]
+    void addWeapon(int weaponCollected)
+    {
+        weaponInventory.Add(weaponCollected);
+        GameManager.instance.source.PlayOneShot(PhotonManager.instance.weaponList[weaponCollected].callout);
+        if (emptyHanded)
+        {
+            emptyHanded = false;
+            hand.SetActive(true);
+            pv.RPC("setWeapon", RpcTarget.AllBuffered, emptyHanded, weaponCollected);
+        }
     }
 
     public override void SpriteProcessing()
     {
-        if (Input.GetAxis("Horizontal") != 0 && rb.velocity.y == 0)
+        anim.SetBool("Dead", dead);
+        anim.SetBool("Grounded", grounded);
+        if (dead == false)
         {
-            anim.SetBool("Walking", true);
-        }
-        else
-        {
-            anim.SetBool("Walking", false);
-        }
-
-        if (rb.velocity.y != 0)
-        {
-            anim.SetBool("Jumping", true);
-        }
-        else
-        {
-            anim.SetBool("Jumping", false);
-        }
-
-        if (handAnim == true)
-        {
-            if (Input.GetKey(KeyCode.UpArrow) == true && Input.GetKey(KeyCode.DownArrow) == false)
+            if (controls.Base.Move.ReadValue<float>() != 0 && rb.velocity.y == 0)
             {
-                handAnim.SetBool("LookUp", true);
-                handAnim.SetBool("LookDown", false);
-            }
-            else if (Input.GetKey(KeyCode.UpArrow) == false && Input.GetKey(KeyCode.DownArrow) == true)
-            {
-                if (grounded == false)
-                {
-                    handAnim.SetBool("LookUp", false);
-                    handAnim.SetBool("LookDown", true);
-                }
+                anim.SetBool("Walking", true);
             }
             else
             {
-                handAnim.SetBool("LookUp", false);
-                handAnim.SetBool("LookDown", false);
+                anim.SetBool("Walking", false);
             }
 
-            if (grounded == true && handAnim.GetBool("LookDown") == true)
+            if (rb.velocity.y != 0)
             {
-                handAnim.SetBool("LookDown", false);
+                anim.SetBool("Jumping", true);
+            }
+            else
+            {
+                anim.SetBool("Jumping", false);
+            }
+
+            if (handAnim == true)
+            {
+                if (controls.Base.LookUp.ReadValue<float>() != 0 && controls.Base.LookDown.ReadValue<float>() == 0)
+                {
+                    handAnim.SetBool("LookUp", true);
+                    handAnim.SetBool("LookDown", false);
+                }
+                else if (controls.Base.LookUp.ReadValue<float>() == 0 && controls.Base.LookDown.ReadValue<float>() != 0)
+                {
+                    if (grounded == false)
+                    {
+                        handAnim.SetBool("LookUp", false);
+                        handAnim.SetBool("LookDown", true);
+                    }
+                }
+                else
+                {
+                    handAnim.SetBool("LookUp", false);
+                    handAnim.SetBool("LookDown", false);
+                }
+
+                if (grounded == true && handAnim.GetBool("LookDown") == true)
+                {
+                    handAnim.SetBool("LookDown", false);
+                }
             }
         }
     }
-
-}
+}*/

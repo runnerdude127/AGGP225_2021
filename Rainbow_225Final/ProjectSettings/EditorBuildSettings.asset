@@ -5,13 +5,22 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Title.unity
     guid: 549c17f90b4acb24eb15becaa145933d
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Lobby.unity
     guid: 95d25349f3fbf4c45930fc248fa303e0
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/InGame.unity
     guid: 2cda990e2423bbf4892e6590ba056729
+  - enabled: 1
+    path: Assets/Scenes/Mirror/MirrorTitle.unity
+    guid: 7d031d21a83ca9b4cb485b93db9695dc
+  - enabled: 1
+    path: Assets/Scenes/Mirror/MirrorTest.unity
+    guid: a9e5ad0e30335fe4d9a17268a1d7cfe1
+  - enabled: 1
+    path: Assets/Scenes/Mirror/MirrorLobby.unity
+    guid: b9a87892e10c410409cfe333cbad4410
   m_configObjects: {}

@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a74443ce76fd6e647bc67acc000cac3a, type: 3}
+  m_Name: Fire
+  m_EditorClassIdentifier: 
+  thisPrefab: {fileID: 4196298661244572297, guid: 4b4493d31194d8c46abd815b1815f3d8, type: 3}
+  name: 
+  icon: {fileID: 0}
+  speed: 0
+  damage: 0
+  hitStun: 0
+  lifetime: 0
+  bulletType: {fileID: 0}
+  exitType: {fileID: 0}
+  shotHit: {fileID: 0}
+  enemyHit: {fileID: 0}

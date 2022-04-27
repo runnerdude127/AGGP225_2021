@@ -269,112 +269,190 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   myUsername: 
   canConnect: 0
+  gamemodeList:
+  - name: Deathmatch
+    icon: {fileID: 3752016821854407125, guid: ede272affe636f94cbcb0491c3b16502, type: 3}
+    FFA: 1
+    twoTeam: 1
+    threeTeam: 1
+    fourTeam: 1
+    fixedTeams: 0
+    presetTeams: []
+  - name: Intense Deathmatch
+    icon: {fileID: 5687524595573011454, guid: ede272affe636f94cbcb0491c3b16502, type: 3}
+    FFA: 1
+    twoTeam: 1
+    threeTeam: 1
+    fourTeam: 1
+    fixedTeams: 0
+    presetTeams: []
+  - name: Capture the Flag
+    icon: {fileID: -145808401816936526, guid: ede272affe636f94cbcb0491c3b16502, type: 3}
+    FFA: 0
+    twoTeam: 1
+    threeTeam: 1
+    fourTeam: 1
+    fixedTeams: 0
+    presetTeams: []
+  - name: Precious Jewels
+    icon: {fileID: 9047942841961285903, guid: ede272affe636f94cbcb0491c3b16502, type: 3}
+    FFA: 1
+    twoTeam: 0
+    threeTeam: 0
+    fourTeam: 0
+    fixedTeams: 0
+    presetTeams: []
+  - name: Round the Demon
+    icon: {fileID: -292476657873066356, guid: ede272affe636f94cbcb0491c3b16502, type: 3}
+    FFA: 0
+    twoTeam: 1
+    threeTeam: 0
+    fourTeam: 0
+    fixedTeams: 1
+    presetTeams:
+    - name: Demon
+      teamColor: {r: 0.49056602, g: 0, b: 0, a: 0}
+      swapOnRespawn: 0
+      members: []
+      spawnPoints: []
+      respawning: 0
+    - name: Rounders
+      teamColor: {r: 1, g: 0.9398673, b: 0.3339622, a: 0}
+      swapOnRespawn: 0
+      members: []
+      spawnPoints: []
+      respawning: 0
+  - name: King of the Hill
+    icon: {fileID: -5264349513311935306, guid: ede272affe636f94cbcb0491c3b16502, type: 3}
+    FFA: 1
+    twoTeam: 1
+    threeTeam: 1
+    fourTeam: 1
+    fixedTeams: 0
+    presetTeams: []
+  - name: Basketball
+    icon: {fileID: -2434362754934827416, guid: ede272affe636f94cbcb0491c3b16502, type: 3}
+    FFA: 0
+    twoTeam: 1
+    threeTeam: 0
+    fourTeam: 0
+    fixedTeams: 0
+    presetTeams: []
+  - name: Hide and Seek
+    icon: {fileID: -8692956992130699471, guid: ede272affe636f94cbcb0491c3b16502, type: 3}
+    FFA: 0
+    twoTeam: 1
+    threeTeam: 0
+    fourTeam: 0
+    fixedTeams: 1
+    presetTeams:
+    - name: Hiders
+      teamColor: {r: 0.1915984, g: 0.29328376, b: 0.8679245, a: 0}
+      swapOnRespawn: 0
+      members: []
+      spawnPoints: []
+      respawning: 0
+    - name: Seekers
+      teamColor: {r: 0.8207547, g: 0.19695647, b: 0.111498706, a: 0}
+      swapOnRespawn: 0
+      members: []
+      spawnPoints: []
+      respawning: 1
+  - name: Zombies
+    icon: {fileID: -171452630345709121, guid: ede272affe636f94cbcb0491c3b16502, type: 3}
+    FFA: 0
+    twoTeam: 1
+    threeTeam: 0
+    fourTeam: 0
+    fixedTeams: 1
+    presetTeams:
+    - name: Survivors
+      teamColor: {r: 0.53207546, g: 1, b: 0.80867, a: 0}
+      swapOnRespawn: 0
+      members: []
+      spawnPoints: []
+      respawning: 0
+    - name: Zombies
+      teamColor: {r: 0.17922664, g: 0.509434, b: 0.03556424, a: 0}
+      swapOnRespawn: 0
+      members: []
+      spawnPoints: []
+      respawning: 1
+  - name: Hot Potato
+    icon: {fileID: 8990929236954338107, guid: ede272affe636f94cbcb0491c3b16502, type: 3}
+    FFA: 1
+    twoTeam: 0
+    threeTeam: 0
+    fourTeam: 0
+    fixedTeams: 0
+    presetTeams: []
   classList:
-  - name: Vermili
-    hp: 10
-    speed: 2
-    jumpHeight: 3
-    mystery: 0
-    sprite: {fileID: 6286595657586805340, guid: a5d73518489bdac49af1ce0de17df530, type: 3}
-    animations: {fileID: 9100000, guid: 8cb8fdd6885f9c449bd5bab6f8865e79, type: 2}
-    smallIcon: {fileID: 4712819070781537712, guid: 95e9ebb772862b5488028a99de9fd535, type: 3}
-    bigIcon: {fileID: 699703873648253923, guid: 8ec51c4771ae9f64abf11aa66b1c9b2c, type: 3}
-  - name: Ambers
-    hp: 3
-    speed: 10
-    jumpHeight: 2
-    mystery: 0
-    sprite: {fileID: 4121880872312635667, guid: ba3b2736c8bf7a9408bcd241847de811, type: 3}
-    animations: {fileID: 9100000, guid: 616a8a251c971254e8734c83ed9ccad3, type: 2}
-    smallIcon: {fileID: -5726507272945555552, guid: 95e9ebb772862b5488028a99de9fd535, type: 3}
-    bigIcon: {fileID: 2434629766918126224, guid: 8ec51c4771ae9f64abf11aa66b1c9b2c, type: 3}
-  - name: Canary
-    hp: 5
-    speed: 3
-    jumpHeight: 7
-    mystery: 0
-    sprite: {fileID: 8499740148186698395, guid: 725cf83aa815e154cbf0a1d8abdc3acc, type: 3}
-    animations: {fileID: 9100000, guid: 2a88d6b1eb96e8146bc764727e7d2882, type: 2}
-    smallIcon: {fileID: 1375065177354957178, guid: 95e9ebb772862b5488028a99de9fd535, type: 3}
-    bigIcon: {fileID: 8558633213039616950, guid: 8ec51c4771ae9f64abf11aa66b1c9b2c, type: 3}
-  - name: Miretruese
-    hp: 8
-    speed: 3
-    jumpHeight: 4
-    mystery: 0
-    sprite: {fileID: -2712454104627450637, guid: e856c2a13d66ee24e8f3255a70e9b8e7, type: 3}
-    animations: {fileID: 9100000, guid: 911fa8bd7be7e8c4190ac1c26a55ce90, type: 2}
-    smallIcon: {fileID: -4496618043832679533, guid: 95e9ebb772862b5488028a99de9fd535, type: 3}
-    bigIcon: {fileID: -7737748710114358818, guid: 8ec51c4771ae9f64abf11aa66b1c9b2c, type: 3}
-  - name: Seenobi
-    hp: 5
-    speed: 6
-    jumpHeight: 4
-    mystery: 0
-    sprite: {fileID: -4987337320017983735, guid: ac9c32ba25b242d428f8b762148af252, type: 3}
-    animations: {fileID: 9100000, guid: 7a760f60494815b4299bca157fd16df5, type: 2}
-    smallIcon: {fileID: -575671543089993596, guid: 95e9ebb772862b5488028a99de9fd535, type: 3}
-    bigIcon: {fileID: 8232878538186372548, guid: 8ec51c4771ae9f64abf11aa66b1c9b2c, type: 3}
-  - name: Aquack
-    hp: 9
-    speed: 2
-    jumpHeight: 4
-    mystery: 0
-    sprite: {fileID: -4003223316803723154, guid: bba467b9b9be08646a2ada9e297a8164, type: 3}
-    animations: {fileID: 9100000, guid: e4db7e8076be3c04582cde4e4b858837, type: 2}
-    smallIcon: {fileID: -7967203457212056302, guid: 95e9ebb772862b5488028a99de9fd535, type: 3}
-    bigIcon: {fileID: 6504610415572811104, guid: 8ec51c4771ae9f64abf11aa66b1c9b2c, type: 3}
-  - name: Zulique
-    hp: 6
-    speed: 2
-    jumpHeight: 7
-    mystery: 0
-    sprite: {fileID: -6429493399158520243, guid: a2e7ba12e326dd24794c0688677b9cda, type: 3}
-    animations: {fileID: 9100000, guid: f0d897670e8067a4796ee5e120388668, type: 2}
-    smallIcon: {fileID: -2226658602370750308, guid: 95e9ebb772862b5488028a99de9fd535, type: 3}
-    bigIcon: {fileID: -4148219816195209633, guid: 8ec51c4771ae9f64abf11aa66b1c9b2c, type: 3}
-  - name: Maunk
-    hp: 5
-    speed: 5
-    jumpHeight: 5
-    mystery: 0
-    sprite: {fileID: -8923911374754931897, guid: 65a40d06d07ae3a44a083e9b61ac7989, type: 3}
-    animations: {fileID: 9100000, guid: 8c592919de4f059458b5fd543dd910bb, type: 2}
-    smallIcon: {fileID: -2406636827378948754, guid: 95e9ebb772862b5488028a99de9fd535, type: 3}
-    bigIcon: {fileID: -7455959467572184964, guid: 8ec51c4771ae9f64abf11aa66b1c9b2c, type: 3}
+  - {fileID: 11400000, guid: 91aa7d6e4c4c648408a5fb89f1b20c51, type: 2}
+  - {fileID: 11400000, guid: b90117716e1d8d84cbd401c8be99f4e3, type: 2}
+  - {fileID: 11400000, guid: 24969a9da9a97244595b3f219c4b9f1b, type: 2}
+  - {fileID: 11400000, guid: 4524bda66ce6dc845bd469a40a592ce1, type: 2}
+  - {fileID: 11400000, guid: 3b0cf8745a379e245b4cce34d73a4aec, type: 2}
+  - {fileID: 11400000, guid: bdfd11d0d63bf344ca3b75239c5c5120, type: 2}
+  - {fileID: 11400000, guid: dfabe327bb258b54e8b749a0d3862ba9, type: 2}
+  - {fileID: 11400000, guid: 0f9c5488709feb348814805b959d7006, type: 2}
   classID: 0
   weaponList:
-  - name: Duster
-    bulletType: {fileID: 3780121062742525804, guid: 61b45ce31cd3e094a8355b98d0d7dab3, type: 3}
-    auto: 0
-    burst: 1
-    delay: 0.02
-    recoil: 0
-    accuracy: 0.1
-    sprite: {fileID: 21300000, guid: fd6b7cbcb3420dc45bad20278c6dc9fd, type: 3}
-    loadSound: {fileID: 8300000, guid: 03da3761b28ba2d4fb919977b31c45e2, type: 3}
-    shootSound: {fileID: 8300000, guid: 474ea6af37c5e5040a322a99fc3e1c82, type: 3}
-  - name: PyuPyu
-    bulletType: {fileID: 525063428801916227, guid: 8607257ec2f140948bc63179f00d9701, type: 3}
-    auto: 1
-    burst: 1
-    delay: 0.1
-    recoil: 0
-    accuracy: 0.2
-    sprite: {fileID: -4812194569210208550, guid: bba467b9b9be08646a2ada9e297a8164, type: 3}
-    loadSound: {fileID: 8300000, guid: 03da3761b28ba2d4fb919977b31c45e2, type: 3}
-    shootSound: {fileID: 8300000, guid: bb367461f677d2d42b86937bceb6c2c7, type: 3}
-  - name: Uka
-    bulletType: {fileID: 4196298661244572297, guid: 4b4493d31194d8c46abd815b1815f3d8, type: 3}
-    auto: 1
-    burst: 5
-    delay: 0.1
-    recoil: 0
-    accuracy: 25
-    sprite: {fileID: 4444071716422392739, guid: ede272affe636f94cbcb0491c3b16502, type: 3}
-    loadSound: {fileID: 8300000, guid: 03da3761b28ba2d4fb919977b31c45e2, type: 3}
-    shootSound: {fileID: 8300000, guid: 029534fb6a713c843883d16b85e0bec0, type: 3}
+  - {fileID: 11400000, guid: 4e189eaa078dede4d9bbe378a6a90f28, type: 2}
+  - {fileID: 11400000, guid: c3a97167965b35148843c36fdf44aff0, type: 2}
+  - {fileID: 11400000, guid: e2df9a7bbf3fb43448f1fe985a20a30c, type: 2}
+  - {fileID: 11400000, guid: e9b9cfc6e0dcfb84d9de179a44a4b05c, type: 2}
+  - {fileID: 11400000, guid: db4bef533740ab64ba1f4703581a653e, type: 2}
+  - {fileID: 11400000, guid: c102463de2aeea54385be7f43283918f, type: 2}
+  - {fileID: 11400000, guid: 966985f58f5755846b5ffb1ed7bdd0e3, type: 2}
+  - {fileID: 11400000, guid: f04cd625162b4b14c8068cf494c5d59e, type: 2}
+  - {fileID: 11400000, guid: 115fec2aeb99aa145b436da1bbf76fbc, type: 2}
+  - {fileID: 11400000, guid: 10a6e339e2b60d54ba3cbb590a643be5, type: 2}
+  - {fileID: 11400000, guid: 52beb8593d3d6a347b83906b4ed572f8, type: 2}
+  - {fileID: 11400000, guid: b9c111ff2077ae24085345fa37e8df29, type: 2}
+  - {fileID: 11400000, guid: b7e816dbdba5eed4fa1a8b908ab7857a, type: 2}
+  - {fileID: 11400000, guid: ba8d5dbf2463abb47b899f703f98af0d, type: 2}
+  - {fileID: 11400000, guid: f411fb55cc569644c8bef6e44efe0c21, type: 2}
+  - {fileID: 11400000, guid: 453d33ad09de0ac4f8709bf25618805f, type: 2}
+  - {fileID: 11400000, guid: 486af9ae6a1b0234298dd0939c7c7728, type: 2}
+  - {fileID: 11400000, guid: 62c2b431c333ac54390db6d83f40b0a7, type: 2}
+  - {fileID: 11400000, guid: ae5dc7f3a4f487840a72cd5e60c4f1a7, type: 2}
+  - {fileID: 11400000, guid: 952bae79588c81142b2db955a85fab48, type: 2}
+  - {fileID: 11400000, guid: 1e14a640586cf8d4f811f1b5e4d4dda5, type: 2}
+  - {fileID: 11400000, guid: bc8eecff083fa3b4f8f7620a669432b6, type: 2}
+  - {fileID: 11400000, guid: 707a9ef0a8b02fb4dacfa805031f4414, type: 2}
+  - {fileID: 11400000, guid: f73e8779ffb61c944b31eb4e34725e73, type: 2}
+  - {fileID: 11400000, guid: a8f90913234afc94d96ba3abd295e99c, type: 2}
+  - {fileID: 11400000, guid: b7606fa7359007643b3381eb7062061f, type: 2}
   weaponID: 0
+  bulletList:
+  - {fileID: 0}
+  - {fileID: 11400000, guid: 794712c79b8228642bd63d82b05b1d8e, type: 2}
+  - {fileID: 0}
+  - {fileID: 11400000, guid: 62c525fdbb8344c4c827163cafe83bc3, type: 2}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 11400000, guid: 49657eba07ea63b4d9a470c1f1e97ddd, type: 2}
+  - {fileID: 11400000, guid: b420effcd7434cc45a0e3da3b5718379, type: 2}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 11400000, guid: 99359336fef609a43b87c0bcabbf1cd6, type: 2}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 11400000, guid: 19eca3579bdb57147888be97450d5afe, type: 2}
+  - {fileID: 11400000, guid: 374c93de75730494f97c2f60533dde4f, type: 2}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 11400000, guid: 87a4f6216d3a6f745a3bd4cee1c34977, type: 2}
+  - {fileID: 11400000, guid: e2705799a18378f4897df301c4bbef87, type: 2}
   timer: 0
 --- !u!4 &365812120
 Transform:
@@ -2070,16 +2148,24 @@ MonoBehaviour:
   m_GameObject: {fileID: 1278880942}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4f231c4fb786f3946a6b90b886c48677, type: 3}
+  m_Script: {fileID: 11500000, guid: 01614664b831546d2ae94a42149d80ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_HorizontalAxis: Horizontal
-  m_VerticalAxis: Vertical
-  m_SubmitButton: Submit
-  m_CancelButton: Cancel
-  m_InputActionsPerSecond: 10
-  m_RepeatDelay: 0.5
-  m_ForceModuleActive: 0
+  m_MoveRepeatDelay: 0.5
+  m_MoveRepeatRate: 0.1
+  m_ActionsAsset: {fileID: -944628639613478452, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_PointAction: {fileID: 1054132383583890850, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_MoveAction: {fileID: 3710738434707379630, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_SubmitAction: {fileID: 2064916234097673511, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_CancelAction: {fileID: -1967631576421560919, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_LeftClickAction: {fileID: 8056856818456041789, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_MiddleClickAction: {fileID: 3279352641294131588, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_RightClickAction: {fileID: 3837173908680883260, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_ScrollWheelAction: {fileID: 4502412055082496612, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_TrackedDevicePositionAction: {fileID: 4754684134866288074, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_TrackedDeviceOrientationAction: {fileID: 1025543830046995696, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_DeselectOnBackgroundClick: 1
+  m_PointerBehavior: 0
 --- !u!114 &1278880944
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2924,7 +3010,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 32}
-  m_SizeDelta: {x: 32, y: 32}
+  m_SizeDelta: {x: 36, y: 36}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1731863707
 MonoBehaviour:
@@ -3109,6 +3195,7 @@ GameObject:
   - component: {fileID: 1957507232}
   - component: {fileID: 1957507231}
   - component: {fileID: 1957507230}
+  - component: {fileID: 1957507234}
   - component: {fileID: 1957507233}
   m_Layer: 0
   m_Name: Main Camera
@@ -3191,17 +3278,48 @@ MonoBehaviour:
   m_GameObject: {fileID: 1957507229}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6a160d838ff8b4b4693ac20007e008c7, type: 3}
+  m_Script: {fileID: 11500000, guid: c88f5cead0c0b2a4eb05b5900433f8d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_AssetsPPU: 16
   m_RefResolutionX: 640
   m_RefResolutionY: 360
-  m_UpscaleRT: 1
+  m_UpscaleRT: 0
   m_PixelSnapping: 1
   m_CropFrameX: 1
   m_CropFrameY: 0
   m_StretchFill: 0
+--- !u!114 &1957507234
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1957507229}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_RenderShadows: 1
+  m_RequiresDepthTextureOption: 2
+  m_RequiresOpaqueTextureOption: 2
+  m_CameraType: 0
+  m_Cameras: []
+  m_RendererIndex: -1
+  m_VolumeLayerMask:
+    serializedVersion: 2
+    m_Bits: 1
+  m_VolumeTrigger: {fileID: 0}
+  m_RenderPostProcessing: 0
+  m_Antialiasing: 0
+  m_AntialiasingQuality: 2
+  m_StopNaN: 0
+  m_Dithering: 0
+  m_ClearDepth: 1
+  m_RequiresDepthTexture: 0
+  m_RequiresColorTexture: 0
+  m_Version: 2
 --- !u!1 &1968246291
 GameObject:
   m_ObjectHideFlags: 0

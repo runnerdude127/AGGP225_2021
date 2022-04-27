@@ -2,28 +2,50 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-using Photon.Pun;
+using Mirror;
 
-public class Actor : MonoBehaviour
+public class Actor : NetworkBehaviour
 {
     public bool isDamageable;
     public bool hasHealth = false;
     public bool respawns = false;
-    public float invulnTime = .001f;
+    public bool isRespawning = false;
+
+    bool isFlashing = false;
+    bool isBlinking = false;
+    bool isShaking = true;
     public bool isEnemy;
-    public bool damageShake = true;
+    
     public bool doKnockback = true;
     public GameObject deathEffect;
     Vector2 spawnOrigin;
-    bool isDead = false;
+
+
+    public float invulnTime = .5f;
+
+    #region statuses
+
+    public bool dead = false;
+    public bool invulnerable = false;
+    public bool stunned = false;
+    public bool flung = false;
+    public bool stuck = false;
+
+    public bool burning = false;
+    public bool frozen = false;
+    public bool poisoned = false;
+
+    #endregion
+
+    public bool nudging = false;
+
+    public bool grounded;
+    public bool faceTouch;
+    public bool backTouch;
+    public bool upTouch;
 
     public int currentHealth;
     public int health = 10;
-
-    [HideInInspector]
-    public bool invulnurable = false;
-    [HideInInspector]
-    public bool blinkCooldown = false;
 
     [HideInInspector]
     public SpriteRenderer spriteRend;
@@ -38,7 +60,11 @@ public class Actor : MonoBehaviour
     [HideInInspector]
     public float basePitch;
 
+    public GameObject respawnEffect;
+    public GameObject spawnEffect;
+
     public AudioClip damageSound;
+    public AudioClip mortalDamage;
     public GameObject damageNumber;
     public int damageRacked = 0;
     public bool checking = false;
@@ -62,73 +88,167 @@ public class Actor : MonoBehaviour
         currentHealth = health;
     }
 
-    void Update()
+    public virtual void Update()
     {
+        grounded = isGrounded();
+        faceTouch = isTouchFace();
+        backTouch = isTouchBack();
+        upTouch = isTouchUp();
+
         if (damageRacked > 0 && checking == false)
         {
             StartCoroutine(damageNumberCheck());
         }
+
+        if (dead == true && grounded == true)
+        {
+            transform.rotation = Quaternion.identity;
+            rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+            //rb.velocity = rb.velocity / 2;
+        }
+
+        checkBlinks();
     }
 
-    /*private void OnTriggerEnter2D(Collider2D collision)
+    public void checkBlinks()
     {
-        if (isDamageable == true)
+        if (isFlashing == false && invulnerable)
         {
-            if (collision.tag == "Bullet" && invulnurable == false)
-            {
-                Bullet hitBy = collision.gameObject.GetComponent<Bullet>();
-                if (hitBy.creator != this.gameObject)
-                {
-                    Vector3 knockDir = collision.gameObject.transform.position - transform.position;
-                    int damageAmount = hitBy.GetDamage();
-                    StartCoroutine(Hurt(knockDir, damageAmount));
-                }
-            }
+            StartCoroutine(invulnFlash());
         }
-    }*/
 
-    public virtual IEnumerator Hurt(Vector3 knockDir, int damage, int attacker)
-    {
-        invulnurable = true;
-        damageRacked += damage;
-        string deathCause;
-        PhotonView attackView = PhotonView.Find(attacker);
-
-        if (attackView)
+        if (isBlinking == false && stunned)
         {
-            GameObject realAttacker = attackView.gameObject;
-            deathCause = realAttacker.name;
+            StartCoroutine(stunBlink());
+        }
+
+        if (isShaking == false && stunned)
+        {
+            StartCoroutine(stunShake());
+        }
+    }
+
+    public void OnDrawGizmos()
+    {
+        if (col)
+        {
+            Gizmos.color = Color.green;
+            Gizmos.DrawWireCube(col.bounds.center, col.bounds.size);
+            /*Gizmos.color = Color.blue;
+            Gizmos.DrawWireCube(new Vector2(col.bounds.center.x, col.bounds.center.y - .2f), new Vector2(col.bounds.size.x + .15f, col.bounds.size.y));
+            Gizmos.DrawWireCube(new Vector2(col.bounds.center.x, col.bounds.center.y + .2f), new Vector2(col.bounds.size.x + .15f, col.bounds.size.y));
+            Gizmos.color = Color.magenta;
+            Gizmos.DrawWireCube(new Vector2(col.bounds.center.x - .2f, col.bounds.center.y), new Vector2(col.bounds.size.x, col.bounds.size.y + .15f));
+            Gizmos.DrawWireCube(new Vector2(col.bounds.center.x + .2f, col.bounds.center.y), new Vector2(col.bounds.size.x, col.bounds.size.y + .15f));*/
+        }
+    }
+
+    private bool isGrounded()
+    {
+        RaycastHit2D hit = Physics2D.BoxCast(col.bounds.center, col.bounds.size, 0f, Vector2.down, .2f, GameManager.instance.stageLayerMask.value);
+        if (hit.collider)
+        {
+            Debug.DrawRay(col.bounds.center, Vector2.down * (col.bounds.extents.y + .1f), Color.green);
+            return true;
         }
         else
         {
-            deathCause = "natural causes";
+            Debug.DrawRay(col.bounds.center, Vector2.down * (col.bounds.extents.y + .1f), Color.red);
+            return false;
         }
+    }
 
-        source.PlayOneShot(damageSound);
-        StartCoroutine(InvulnFlash());
-        //Debug.Log(gameObject.name + " has been hurt for " + damage + " damage!");
-        if (doKnockback == true && rb)
+    private bool isTouchFace()
+    {
+        RaycastHit2D hit = Physics2D.BoxCast(col.bounds.center, new Vector2(col.bounds.size.x, col.bounds.size.y / 1.5f), 0f, gameObject.transform.right, .2f, GameManager.instance.stageLayerMask.value);
+        if (hit.collider)
         {
-            rb.AddForce(-knockDir * damage / 2, ForceMode2D.Impulse);
+            Debug.DrawRay(col.bounds.center, gameObject.transform.right * (col.bounds.extents.x + .1f), Color.green);
+            return true;
         }
-        if (hasHealth)
+        else
         {
-            currentHealth -= damage;
-            if (currentHealth <= 0)
+            Debug.DrawRay(col.bounds.center, gameObject.transform.right * (col.bounds.extents.x + .1f), Color.red);
+            return false;
+        }
+    }
+
+    private bool isTouchBack()
+    {
+        RaycastHit2D hit = Physics2D.BoxCast(col.bounds.center, new Vector2(col.bounds.size.x, col.bounds.size.y / 1.5f), 0f, -gameObject.transform.right, .2f, GameManager.instance.stageLayerMask.value);
+        if (hit.collider)
+        {
+            Debug.DrawRay(col.bounds.center, -gameObject.transform.right * (col.bounds.extents.x + .1f), Color.green);
+            return true;
+        }
+        else
+        {
+            Debug.DrawRay(col.bounds.center, -gameObject.transform.right * (col.bounds.extents.x + .1f), Color.red);
+            return false;
+        }
+    }
+
+    private bool isTouchUp()
+    {
+        RaycastHit2D hit = Physics2D.BoxCast(col.bounds.center, col.bounds.size, 0f, Vector2.up, .2f, GameManager.instance.stageLayerMask.value);
+        if (hit.collider)
+        {
+            Debug.DrawRay(col.bounds.center, Vector2.up * (col.bounds.extents.y + .1f), Color.green);
+            return true;
+        }
+        else
+        {
+            Debug.DrawRay(col.bounds.center, Vector2.up * (col.bounds.extents.y + .1f), Color.red);
+            return false;
+        }
+    }
+
+    public virtual IEnumerator Hurt(Vector3 knockDir, int damage, string attack, float stunTime)
+    {
+        if (dead == false && invulnerable == false)
+        {
+            damageRacked += damage;
+            string deathCause;
+            GameObject attacker = GameObject.Find(attack);
+
+            if (attacker)
             {
-                Player me = gameObject.GetComponent<Player>();
-                if (me)
+                deathCause = attacker.name;
+            }
+            else
+            {
+                deathCause = "natural causes";
+            }
+
+            source.PlayOneShot(damageSound);
+
+            StartCoroutine(stunFrames(stunTime));
+            //StartCoroutine(invulnFrames(stunTime));
+
+            //Debug.Log(gameObject.name + " has been hurt for " + damage + " damage!");
+
+            yield return new WaitUntil(() => stunned == false);
+            if (doKnockback == true && rb)
+            {
+                rb.AddForce(-knockDir * damage / 2, ForceMode2D.Impulse);
+            }
+            if (hasHealth)
+            {
+                currentHealth -= damage;
+                if (currentHealth <= 0)
                 {
-                    me.pv.RPC("playerDies", RpcTarget.All, deathCause);
-                }
-                else
-                {
-                    StartCoroutine(actorDies(deathCause));
+                    PlayerMIRROR me = gameObject.GetComponent<PlayerMIRROR>();
+                    if (me)
+                    {
+                        //me.pv.RPC("playerDies", RpcTarget.All, deathCause, knockDir.x, knockDir.y, knockDir.z);
+                    }
+                    else
+                    {
+                        StartCoroutine(actorDies(deathCause, knockDir));
+                    }
                 }
             }
         }
-        yield return new WaitForSeconds(invulnTime);
-        invulnurable = false;
     }
 
     public IEnumerator damageNumberCheck()
@@ -136,7 +256,7 @@ public class Actor : MonoBehaviour
         if (damageRacked > 0)
         {
             checking = true;
-            if (invulnurable == true || blinkCooldown == true)
+            if (invulnerable == true)
             {
                 
             }
@@ -153,8 +273,7 @@ public class Actor : MonoBehaviour
         }
     }
 
-
-    public IEnumerator actorDies(string cause)
+    public IEnumerator actorDies(string cause, Vector3 knockDir)
     {
         if (damageRacked > 0)
         {
@@ -163,31 +282,24 @@ public class Actor : MonoBehaviour
             damNum.damageAmount = damageRacked;
             damageRacked = 0;
         } 
-        if (isDead == false)
+        if (dead == false)
         {
-            isDead = true;
+            dead = true;
 
-            spriteRend.enabled = false;
-            col.enabled = false;
             rb.constraints = RigidbodyConstraints2D.None;
-            rb.velocity = new Vector2(0, 0);
+            //rb.velocity = new Vector2(0, 0);
 
-            Instantiate(deathEffect, gameObject.transform.position, Quaternion.identity);
-            rb.AddForce(new Vector3((Random.Range(-1f, 1f) * 10), (Random.Range(-1f, 1f) * 10), (Random.Range(-1f, 1f) * 10)), ForceMode2D.Impulse);
+            source.PlayOneShot(mortalDamage);
+            //Debug.Log("knockdir : " + knockDir);
+            rb.AddForce(transform.up * 5, ForceMode2D.Impulse);
+            rb.AddForce(-knockDir * 10, ForceMode2D.Impulse);
+            rb.AddTorque(rb.velocity.x * 5);
             Debug.Log(this.gameObject.name + " was killed by " + cause);
 
-            yield return new WaitForSeconds(2f);
+            yield return new WaitForSeconds(5f);
             if (respawns)
             {
-                rb.velocity = new Vector2(0, 0);
-                transform.position = getSpawnPoint();
-                currentHealth = health;
-
-                spriteRend.enabled = true;
-                col.enabled = true;
-                rb.constraints = RigidbodyConstraints2D.FreezeRotation;
-
-                isDead = false;
+                StartCoroutine(Respawn(false));
             }
             else
             {
@@ -196,42 +308,129 @@ public class Actor : MonoBehaviour
         } 
     }
 
+    public virtual IEnumerator Respawn(bool firstSpawn)
+    {
+        isRespawning = true;
+        spriteRend.material.SetInt("Boolean_E47E2B67", 1);
+        spriteRend.enabled = false;
+        rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+        if (firstSpawn == false)
+        {
+            Instantiate(deathEffect, gameObject.transform.position, Quaternion.identity);
+            yield return new WaitForSeconds(1f);
+
+            // fade out
+        }
+        rb.velocity = new Vector2(0, 0);
+        rb.bodyType = RigidbodyType2D.Kinematic;
+        transform.position = getSpawnPoint();
+        currentHealth = health;
+        spriteRend.enabled = true;
+
+        // fade in
+
+        // cool animation
+        if (respawnEffect)
+        {
+            Instantiate(respawnEffect, new Vector3(transform.position.x, transform.position.y, -9), Quaternion.identity);
+            spriteRend.material.SetColor("Color_D7188EF4", Color.white);
+        }
+        yield return new WaitForSeconds(respawnEffect.GetComponent<Effect>().effectSound.length + .5f);
+        if (spawnEffect)
+        {
+            Instantiate(spawnEffect, new Vector3(transform.position.x, transform.position.y, -9), Quaternion.identity);
+            spriteRend.material.SetColor("Color_D7188EF4", Color.black);
+        }
+        yield return new WaitForSeconds(.5f);
+
+        rb.bodyType = RigidbodyType2D.Dynamic;
+        invulnerable = false;
+        dead = false;
+        isRespawning = false;
+    }
+
     public virtual Vector2 getSpawnPoint()
     {
         return spawnOrigin;
     }
 
-    IEnumerator InvulnFlash()
+    public IEnumerator stunFrames(float stun)
     {
-        while (invulnurable == true && blinkCooldown == false)
+        stunned = true;
+        if (stun >= .05f)
         {
-            if (damageShake == true)
-            {
-                StartCoroutine(DamageShake(.1f, .05f));
-            }
-            blinkCooldown = true;
-            spriteRend.material.color = new Color(45, 200, 20, 1);
-            yield return new WaitForSeconds(0.05f);
-            spriteRend.material.color = new Color(1, 1, 1, 1);
-            yield return new WaitForSeconds(0.05f);
-            blinkCooldown = false;
+            rb.constraints = RigidbodyConstraints2D.FreezeAll;
         }
+        yield return new WaitForSeconds(stun);
+        if (stun >= .05f)
+        {
+            rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+        }
+        stunned = false;
     }
 
-    IEnumerator DamageShake(float time, float power)
+    public IEnumerator invulnFrames(float stun)
     {
-        Vector3 origin = transform.localPosition;
-        float elapsed = 0.0f;
+        invulnerable = true;
+        yield return new WaitForSeconds(invulnTime + stun);
+        invulnerable = false;
+    }
 
-        while (elapsed < time)
+    IEnumerator stunBlink()
+    {
+        isBlinking = true;
+        while (stunned)
+        {
+            spriteRend.material.SetColor("Color_D7188EF4", Color.white);
+            yield return new WaitForSeconds(0.05f);
+            spriteRend.material.SetColor("Color_D7188EF4", Color.black);
+            yield return new WaitForSeconds(0.05f);
+        }
+        isBlinking = false;
+    }
+
+    IEnumerator stunShake()
+    {
+        isShaking = true;
+
+        Vector3 origin = transform.localPosition;
+        float power = .05f;
+
+        while (stunned)
         {
             float x = Random.Range(-1f, 1f) * power;
             float y = Random.Range(-1f, 1f) * power;
 
             transform.localPosition = new Vector3(origin.x + x, origin.y + y, origin.z);
             yield return null;
-            elapsed += Time.deltaTime;
         }
+
         transform.localPosition = origin;
+        isShaking = false;
     }
+
+    IEnumerator invulnFlash()
+    {
+        isFlashing = true;
+        while(invulnerable)
+        {
+            spriteRend.enabled = false;
+            yield return new WaitForSeconds(0.1f);
+            spriteRend.enabled = true;
+            yield return new WaitForSeconds(0.1f);
+        }
+        isFlashing = false;
+    }
+
+    #region status inflictions
+
+    public virtual void inflictSnare(GameObject gameObject)
+    {
+        // get stuck
+
+        stuck = true;
+        //transform.position = gameObject.transform.position;
+    }
+
+    #endregion
 }
